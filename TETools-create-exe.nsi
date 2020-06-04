@@ -31,25 +31,17 @@ Section -SETTINGS
   SetOverwrite ifnewer
 SectionEnd
 
-; Section "Python ${PY_VERSION}" sec_py
-  ; File "python-${PY_VERSION}.msi"
-  ; ExecWait 'msiexec /i "$INSTDIR\python-${PY_VERSION}.msi" /qb ALLUSERS=1'
-  ; Delete $INSTDIR\python-${PY_VERSION}.msi
-; SectionEnd
+Section "Python ${PY_VERSION}" sec_py
+  File "python-${PY_VERSION}.msi"
+  ExecWait 'msiexec /i "$INSTDIR\python-${PY_VERSION}.msi" /qb ALLUSERS=1'
+  Delete $INSTDIR\python-${PY_VERSION}.msi
+SectionEnd
 
 Section "Flex Libs Install"
 
   SetOutPath "$INSTDIR"
-    File /r FLExTools1.2.5\*
-    ; ExpandEnvStrings $0 %COMSPEC% 
-    ; nsExec::ExecToStack '"FLExTools1.2.5\FlexTools.bat"'
-
-
-  #CreateDirectory $INSTDIR\backup
-  #CopyFiles "$EXEDIR\flextools-master\*" "$INSTDIR\"
-  #ExecWait 'msiexec /i "$INSTDIR\python-${PY_VERSION}.msi" /qb ALLUSERS=1'
-  #ExecWait "$INSTDIR\flextools-master\FlexTools.cmd"
-  # Delete $INSTDIR\python-${PY_VERSION}.msi
+    File /r \*
+ 
 SectionEnd
 ; Functions
 
