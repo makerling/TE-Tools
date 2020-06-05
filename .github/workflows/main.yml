@@ -13,5 +13,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v1.0.0
         with:
-          name: installsig.exe
-          path: installsig.exe
+          name: TE-Tools-installer.exe
+          path: TE-Tools-installer.exe
