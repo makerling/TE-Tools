@@ -40,7 +40,7 @@ SectionEnd
 Section "Flex Libs Install"
 
   SetOutPath "$INSTDIR"
-    File /r \*
+    File /r D:\a\TE-Tools\TE-Tools\*
  
 SectionEnd
 ; Functions
