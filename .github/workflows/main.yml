@@ -6,3 +6,6 @@ jobs:
     steps:      
     - name: Create nsis installer
       uses: joncloud/makensis-action@v2.0
+      with:
+        arguments: "/V3"
+        script-file: ${{ github.workspace }}/install.nsi
