@@ -3,16 +3,8 @@ on: [push]
 jobs:
   create_installer:
     runs-on: windows-latest
-    steps:
-    - uses: actions/checkout@v1
-      
+    steps:      
     - name: Create nsis installer
       uses: joncloud/makensis-action@v2.0
       with:
         script-file: "TETools-create-exe.nsi"
-
-    - name: Upload artifact
-      uses: actions/upload-artifact@v1.0.0
-      with:
-        name: installsig.exe
-        path: installsig.exe
