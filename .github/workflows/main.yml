@@ -4,8 +4,8 @@ jobs:
   create_installer:
     runs-on: windows-latest
     steps:      
-    - name: Create nsis installer
-      uses: joncloud/makensis-action@v2.0
-      with:
-        arguments: "/V3"
-        script-file: ${{ github.workspace }}/install.nsi
+      - uses: actions/checkout@v1
+      - name: Create nsis installer
+        uses: joncloud/makensis-action@v2.0
+        with:
+          script-file: ${{ github.workspace }}/install.nsi
