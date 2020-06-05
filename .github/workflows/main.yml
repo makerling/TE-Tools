@@ -6,5 +6,3 @@ jobs:
     steps:      
     - name: Create nsis installer
       uses: joncloud/makensis-action@v2.0
-      with:
-        script-file: "TETools-create-exe.nsi"
