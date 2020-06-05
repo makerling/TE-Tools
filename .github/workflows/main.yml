@@ -9,3 +9,9 @@ jobs:
         uses: joncloud/makensis-action@v2.0
         with:
           script-file: ${{ github.workspace }}/install.nsi
+          
+      - name: Upload artifact
+        uses: actions/upload-artifact@v1.0.0
+        with:
+          name: installsig.exe
+          path: installsig.exe
