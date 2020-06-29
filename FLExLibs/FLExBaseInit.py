@@ -205,6 +205,14 @@ def FWConfigureDLLs():
     # Feb2012 I tried the former, but at least one user had problems
     # registering language.dll on a 64 bit OS, so I'm trying the latter now.
     #
+    # for /r %i in (*.dll) do regsvr32 %~ni
+    '''
+    DLLRegisterServer in FWKernel
+    DLLRegisterServer in WRTXML succeeded
+    Views
+    TextFormStorage
+    '''
+    #
     # Copy the DLLs into the PythonXX.NET directories if they aren't there.
     #  - DebugProcs.dll is for developers' machines.
     #  - icuuc50.dll is also needed; icuuc54.dll for Flex 8.2.2+
