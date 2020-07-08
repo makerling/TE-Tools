@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ldml>
+	<identity>
+		<version
+			number="" />
+		<generation
+			date="2020-04-26T17:56:34" />
+		<language
+			type="tr" />
+	</identity>
+	<collations>
+		<collation>
+			<rules>
+				<reset>C</reset>
+				<p>ç</p>
+				<t>Ç</t>
+				<reset>G</reset>
+				<p>ğ</p>
+				<t>Ğ</t>
+				<reset
+					before="primary">i</reset>
+				<p>ı</p>
+				<t>I</t>
+				<reset>i</reset>
+				<t>İ</t>
+				<reset>O</reset>
+				<p>ö</p>
+				<t>Ö</t>
+				<reset>S</reset>
+				<p>ş</p>
+				<t>Ş</t>
+				<reset>U</reset>
+				<p>ü</p>
+				<t>Ü</t>
+			</rules>
+			<special xmlns:palaso="urn://palaso.org/ldmlExtensions/v1">
+				<palaso:sortRulesType
+					value="CustomICU" />
+			</special>
+		</collation>
+	</collations>
+	<special xmlns:palaso="urn://palaso.org/ldmlExtensions/v1">
+		<palaso:abbreviation
+			value="Tur" />
+		<palaso:defaultFontFamily
+			value="Charis SIL" />
+		<palaso:languageName
+			value="Turkish" />
+		<palaso:spellCheckingId
+			value="tr" />
+		<palaso:version
+			value="2" />
+	</special>
+	<special xmlns:palaso2="urn://palaso.org/ldmlExtensions/v2">
+		<palaso2:knownKeyboards>
+			<palaso2:keyboard
+				layout="US"
+				locale="en-US"
+				os="Win32NT" />
+		</palaso2:knownKeyboards>
+		<palaso2:version
+			value="2" />
+	</special>
+	<special xmlns:fw="urn://fieldworks.sil.org/ldmlExtensions/v1">
+		<fw:graphiteEnabled
+			value="False" />
+		<fw:validChars
+			value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-16&quot;?&gt;&#xD;&#xA;&lt;ValidCharacters&gt;&#xD;&#xA;  &lt;WordForming&gt;‌￼‍￼-￼'￼་￼༌￼⁰￼¹￼²￼³￼⁴￼⁵￼⁶￼⁷￼⁸￼⁹￼ꞌ￼Ꞌ&lt;/WordForming&gt;&#xD;&#xA;  &lt;Numeric /&gt;&#xD;&#xA;  &lt;Other /&gt;&#xD;&#xA;&lt;/ValidCharacters&gt;" />
+		<fw:windowsLCID
+			value="1055" />
+	</special>
+</ldml>

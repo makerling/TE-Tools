@@ -50,7 +50,8 @@ except Exception, e:
 import CDFDotNetUtils
 from CDFConfigStore import CDFConfigStore
 
-import FLExFDO  
+import FLExFDO 
+from FLExDBAccess import FLExDBAccess 
 #from subprocess import check_output                             
 #opens FLExTools if run from syswow
 #C:\Windows\SysWOW64\cmd.exe
@@ -100,9 +101,9 @@ TODO - add options for AllBooks, FilteredBooks, SingleBook - line 458 471
 #----------------------------------------------------------------
 # The main processing function
 
-def MainFunction(DB, report, modifyAllowed):    
+def MainFunction(DB):    
     
-    report.Info("DB is: %s" % DB)
+    print("DB is: %s" % DB)
                 
     #--------UTIL-FUNCTIONS/METHODS--------------------------------    
         
@@ -159,12 +160,12 @@ def MainFunction(DB, report, modifyAllowed):
             for h in os.listdir(unicode(projectDir)):
                 if h.endswith(".fwdata"):
                     filenameNoext = os.path.splitext(h)[0]
-                    report.Info("current project is: %s" % filenameNoext)
+                    print("current project is: %s" % filenameNoext)
                     return filenameNoext 
         
         #<para xml:lang="en">
         domain = os.environ['userdomain'] + '\\' + getpass.getuser()                 
-        longDate = str(todaysdate.strftime("%B %d, %Y at %I:%M %p"))
+        longDate = str(datetime.now().strftime("%B %d, %Y at %I:%M %p"))
         string = projectName() + " exported by " + domain + " on " + longDate
         para = ET.SubElement(revisionDesc, 'para')
         para.set('xml:lang','en')
@@ -241,30 +242,23 @@ def MainFunction(DB, report, modifyAllowed):
         bookElement = ET.SubElement(canonExists(oxes, sCanon), 'book', ID=m_sCurrentBookId)   
 
         ExportBookTitle(book, bookElement)
-        
-        # iLim = book.SectionsOS.Count
-        
-        # for i,section in enumerate(book.SectionsOS): 
-            # nextSection = book.SectionsOS[i + 1] if (i + 1) < iLim else None
-        # for previousSection, section, nextSection in previous_and_next(book.SectionsOS):             
-            # ExportBookSection(section, nextSection, m_iCurrentChapter, bookElement)
-
               
     #----------------------------------------------------------------         
-     
+
+
     def ExportBookTitle(book, bookElement):  #FINISHED
         
         titleGroupShort = ITsString(book.Name.BestVernacularAlternative).Text  
-        # report.Info("titleGroupShort is: %s" % titleGroupShort)     #Sifr-İ Raʿos 
+        # print("titleGroupShort is: %s" % titleGroupShort)     #Sifr-İ Raʿos 
 
         def titleGroupNameFunction():
             for titlePara in book.TitleOA.ParagraphsOS:  
                 titleGroupName = ITsString(titlePara.Contents).Text       
-                # report.Info("titleGroupName is: %s" % titleGroupName)  #Rût 
+                # print("titleGroupName is: %s" % titleGroupName)  #Rût 
                 return titleGroupName
         
         titleGroup = ET.SubElement(bookElement, 'titleGroup', short=titleGroupShort)   #Sifr-İ Raʿos     
-        # report.Info("titleGroup is: %s" % titleGroupNameFunction())  
+        # print("titleGroup is: %s" % titleGroupNameFunction())  
         title = ET.SubElement(titleGroup, 'title', type="main")
         trGroup = ET.SubElement(title, 'trGroup')
         tr = ET.SubElement(trGroup, 'tr')   
@@ -277,7 +271,7 @@ def MainFunction(DB, report, modifyAllowed):
         for section in book.SectionsOS:       
                         
             sectionElement = ET.SubElement(bookElement, 'section')
-            # report.Info("Section.ContentOA.ParagraphOS Count is: %s" % section.ContentOA.ParagraphsOS.Count)
+            # print("Section.ContentOA.ParagraphOS Count is: %s" % section.ContentOA.ParagraphsOS.Count)
             
             ExportParaHeading(book, section, bookElement, sectionElement)
             
@@ -285,7 +279,7 @@ def MainFunction(DB, report, modifyAllowed):
     
         for paraHeading in section.HeadingOA.ParagraphsOS:
             sectionHeadTitle = ITsString(paraHeading.Contents).Text
-            # report.Info("sectionHeadTitle is: %s" % sectionHeadTitle)
+            # print("sectionHeadTitle is: %s" % sectionHeadTitle)
             sectionHead = ET.SubElement(sectionElement, 'sectionHead')        
             trGroup = ET.SubElement(sectionHead, 'trGroup')        
             tr = ET.SubElement(trGroup, 'tr') 
@@ -312,7 +306,7 @@ def MainFunction(DB, report, modifyAllowed):
             paraSub = section[1][1]
             
             n += 1
-            # report.Info("n is: %s, current verse is: %s" % (n, paraSub.StartRef.Verse))
+            # print("n is: %s, current verse is: %s" % (n, paraSub.StartRef.Verse))
 
             bookID = book.BookId
             chapter = int(paraSub.StartRef.Chapter)
@@ -333,7 +327,7 @@ def MainFunction(DB, report, modifyAllowed):
                 OpenVerse(paraSub, paraElement, bookID, chapter, verse, sectionCount, verseStartString)                                        
                 ExportVerse(paraSub, paraElement, bookID, chapter, verse, sectionCount, verseStartString)             
                 if nextSection != None: #catches everything but the last element
-                    # report.Info("current verse is: %s, next verse is: %s" % (section[0],nextSection[0]))                
+                    # print("current verse is: %s, next verse is: %s" % (section[0],nextSection[0]))                
                     if section[1][0] < nextSection[1][0]: #only processes elements with one <p>
                         EndVerse(paraSub, paraElement, bookID, chapter, verse, sectionCount, verseStartString)
                 elif n == len(totalVerseRefs): #processes the very last element
@@ -346,8 +340,8 @@ def MainFunction(DB, report, modifyAllowed):
                     EndVerse(paraSub, paraElement, bookID, chapter, verse, sectionCount, verseStartString)
                     CloseChapter(paraSub, paraElement, bookID, chapter, verse, sectionCount, chapterStartString)
     
-        # report.Info("verse1 are: %s, count is: %s" % (totalVerseRefs,len(totalVerseRefs)))
-        # report.Info("i-s------- are: %s, count is: %s" % (enumeration, len(enumeration)))  
+        # print("verse1 are: %s, count is: %s" % (totalVerseRefs,len(totalVerseRefs)))
+        # print("i-s------- are: %s, count is: %s" % (enumeration, len(enumeration)))  
             
         # paraElement.insert(1,chapterStartElement)
         # paraElement.insert(2,verseStartElement)
@@ -357,7 +351,7 @@ def MainFunction(DB, report, modifyAllowed):
     
     def OpenChapter(paraSub, paraElement, bookID, chapter, verse, sectionCount, chapterStartString):        
                        
-        # report.Info("FirstInStText is True")
+        # print("FirstInStText is True")
         chapterStartElement = ET.SubElement(paraElement, "chapterStart")             
         chapterStartElement.set('ID',chapterStartString)
         chapterStartElement.set('n',str(chapter))                       
@@ -375,7 +369,7 @@ def MainFunction(DB, report, modifyAllowed):
         trElement = ET.SubElement(trGroupElement, "tr")                            
         if paraSub.ChapterNumberRun == False:
             trElement.text = ITsString(paraSub.Text).Text    
-            # report.Info("verse is: %s" % ITsString(paraSub.Text).Text)
+            # print("verse is: %s" % ITsString(paraSub.Text).Text)
     
     def EndVerse(paraSub, paraElement, bookID, chapter, verse, sectionCount, verseStartString):
         
@@ -388,104 +382,6 @@ def MainFunction(DB, report, modifyAllowed):
         chapterEndElement = ET.SubElement(paraElement, "chapterEnd") 
         chapterEndElement.set('ID',chapterStartString) 
 
-                    
-                # lastVerseInSection = BCVRef.GetVerseFromBcv(section.VerseRefEnd)
-                # report.Info("sectionnums: %s" % section.Count)
-                # if lastVerseInSection
-                
-                
-#TODO at the end of chapter put ChapterEnd element, at the end of only the last <p> put verseEnd element
-                # if paraSub.FirstInStText == True:
-                    # report.Info("FirstInStText is True")
-                  
-    #----------------------------------------------------------------    
-    
-    # def ExportBookSection(section, nextSection, m_iCurrentChapter, bookElement):
-    
-        # m_sectionRefStart = section.VerseRefStart
-        # m_sectionRefEnd = section.VerseRefEnd
-        # report.Info("m_sectionRefStart is: %s" % m_sectionRefStart)
-        # if m_iCurrentChapter == 0:
-            # m_iCurrentChapter = BCVRef.GetChapterFromBcv(m_sectionRefStart)
-            # report.Info("m_iCurrentChapter is: %s" % m_iCurrentChapter)
-            
-        # WriteSectionHeading(section, bookElement)        
-        
-        # for previousPara, para, nextPara in previous_and_next(section.ContentOA.ParagraphsOS): 
-            # ExportParagraph(para, nextPara)                    
-    
-    # #----------------------------------------------------------------    
-    
-    # def WriteSectionHeading(section, bookElement):
-
-        # m_fInSectionHeader = True
-        # cparaHead = section.HeadingOA.ParagraphsOS.Count
-        # fSectionFromNext = False
-        # fUnknownStyle = False
-        # stylePrev = None
-        
-        # for i, para in enumerate(section.HeadingOA.ParagraphsOS):
-            # style = para.StyleName
-            # report.Info("style is: %s" % style)
-            
-            # fTitle = WriteSectionHead(para, i, style, stylePrev, fSectionFromNext, fUnknownStyle)
-            
-            # # if (fTitle):
-                # # sectionHead = ET.SubElement(section, 'sectionHead') ???????? need a section first!
-            
-            # stylePrev = style            
-    
-    # #----------------------------------------------------------------    
-
-    # def FinishAndStartSection(level, sType, fFirstPara):
-    
-        # #m_stackSectionLevels: can ignore maybe because our Sections are all 'normal'
-        
-    
-    # #----------------------------------------------------------------    
-                        
-    # def WriteSectionHead(para, i, style, stylePrev, fSectionFromNext, fUnknownStyle):
-
-        # FinishAndStartSection(SectionLevel.Normal, None, i == 0)
-        
-        # # def switch(x):
-            # # return {
-                # # # "Section Head Major":
-                    # # # FinishAndStartSection(SectionLevel.Major, "major", i == 0),
-                # # # # "Section Head":,
-                # # # "Chapter Head":
-                    # # # FinishAndStartSection(SectionLevel.Normal, None, i == 0),
-                # # # "Section Head Minor":
-                    # # # FinishAndStartSection(SectionLevel.Minor, "minor", i == 0),
-                # # # "Section Head Series":
-                    # # # FinishAndStartSection(SectionLevel.Series, "series", i == 0),
-                # # "Intro Section Head":
-                    # # FinishAndStartSection(SectionLevel.Normal, None, i == 0),
-                # # # "VariantSectionHead":,
-                # # "Variant Section Tail":
-                    # # FinishAndStartSection(SectionLevel.Normal, "variant", i == 0)}.get(x,
-                    # # FinishAndStartSection(SectionLevel.Normal, None, i == 0))
-                # # # // the remaining styles are more complicated, and may need to look ahead one
-                # # # // paragraph to close/open <section> elements properly.
-                # # # "Speech Speaker":
-                    # # # fSectionFromNext = HandleSpeechSpeaker(paras, i)
-                    # # # return false
-                # # # "Parallel Passage Reference":
-                    # # # fSectionFromNext = HandleSecondaryTitle(paras, i, style, stylePrev)
-                    # # # return false
-                # # # "Hebrew Title":
-                    # # # fSectionFromNext = HandleSecondaryTitle(paras, i, style, stylePrev)
-                    # # # return true
-                # # # "Section Range Paragraph":
-                    # # # fSectionFromNext = HandleSecondaryTitle(paras, i, style, stylePrev)
-                    # # # return true
-
-        # # switch(style)
-    # #----------------------------------------------------------------    
-                        
-    # def ExportParagraph(para, nextPara):
-
-        # test = 'Hello World'    
 #----------------------------------------------------------------
     ExportTE()
     ExportScripture()   
@@ -494,5 +390,10 @@ def MainFunction(DB, report, modifyAllowed):
     tree = ET.ElementTree(oxes)
     writing = tree.write(xmlfile, encoding="utf-8", xml_declaration=True)      
 #----------------------------------------------------------------
-if __name__ == '__main__':
-    main()
+if __name__ == "__main__":
+
+    DB = FLExDBAccess()
+    DB.OpenDatabase("RuthTestFLExTools")
+    print("DB is: %s" % DB)
+
+    python Modules\OSM\OSM.py
