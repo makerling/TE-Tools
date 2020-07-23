@@ -445,7 +445,7 @@ def MainFunction(DB, report, modifyAllowed):
     ExportTE()
     ExportScripture()   
     
-    xmlfile = 'osm.oxes'
+    xmlfile = 'importosm.oxes'
     tree = ET.ElementTree(oxes)
     writing = tree.write(xmlfile, encoding="utf-8", xml_declaration=True)                                     
 #----------------------------------------------------------------

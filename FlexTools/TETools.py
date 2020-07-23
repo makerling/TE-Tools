@@ -1,4 +1,4 @@
-# coding=utf-8#
+# -*- coding: utf-8 -*-
 #   Project: FlexTools
 #   Module:  FLExTools
 #   Platform: .NET v2 Windows.Forms (Python.NET 2.5)
@@ -11,6 +11,8 @@
 #   Craig Farrow
 #   Oct 2010
 # TODO: change "messagebox" in imports to tkinter boxes
+from timeit import default_timer as timer
+start = timer()
 
 import codecs
 import sys
@@ -52,7 +54,7 @@ from CDFConfigStore import CDFConfigStore
 
 import FLExFDO 
 from FLExDBAccess import FLExDBAccess 
-#from subprocess import check_output                             
+                           
 #opens FLExTools if run from syswow
 #C:\Windows\SysWOW64\cmd.exe
 #set FWVersion=8
@@ -81,319 +83,203 @@ import getpass
 from itertools import tee, islice, chain, izip
 from collections import OrderedDict 
 
-#----------------------------------------------------------------
-# Documentation that the user sees:        
+import OSM
+from setuptables import foo
 
-docs = {FTM_Name        : "OSM",
-        FTM_Version     : 1,
-        FTM_ModifiesDB  : False,
-        FTM_Synopsis    : "working with OSM project",
-        FTM_Description :
-u"""
-Working with OSM project
+import sqlite3 as lite
+from SIL.FieldWorks.FDO import (ILangProjectRepository, IStTxtParaFactory, 
+        ITextFactory, IStTextFactory, IScrTxtParaRepository)
+from SIL.FieldWorks.Common.COMInterfaces import ITsString
 
-Scripture Repository > ScriptureBookOS (IScrBook) > TitleOA (StText) > ParagraphOS (IStPara) > Text (ITsString) = "Rût"
-TODO - add options for AllBooks, FilteredBooks, SingleBook - line 458 471
-
-#TODO work on encapsulation/inheritance with python
-""" }
-                 
-#----------------------------------------------------------------
-# The main processing function
-
-def MainFunction(DB):    
-    
-    print("DB is: %s" % DB)
-                
-    #--------UTIL-FUNCTIONS/METHODS--------------------------------    
-        
-    #https://stackoverflow.com/questions/9573244/how-to-check-if-the-string-is-empty
-    #proper way to check is string is null in python    
-    def isBlank (string):
-        # return not (string and string.strip())
-        return not string      
-
-    #https://stackoverflow.com/questions/1011938/python-loop-that-also-accesses-previous-and-next-values/54995234#54995234
-    #Python loop that also accesses previous and next values
-    def previous_and_next(value):
-        prevs, items, nexts = tee(value, 3)
-        prevs = chain([None], prevs)
-        nexts = chain(islice(nexts, 1, None), [None])
-        return izip(prevs, items, nexts)        
-                
-    #----------------------------------------------------------------
-
-    #https://github.com/sillsdev/FieldWorks/blob/hotfix/8.3.14/Src/TE/TeImportExport/ExportXml.cs
-    ####<oxes>####  line 280 - 295
-    oxes = ET.Element("oxes")
-    oxes.set('xmnls', 'http://www.wycliffe.net/scripture/namespace/version_1.1.4')      
-
-    def ExportTE():         
-        
-        #<oxesText>
-        oxesText = ET.SubElement(oxes, 'oxesText')        
-        oxesText.set('canonical', 'true')
-        oxesText.set('xml:lang', 'tr')        
-        oxesText.set('oxesIDWork', 'WBT.tr')        
-        oxesText.set('type', 'Wycliffe-1.1.4')
-        
-    ####<header>#### #line 333 - 375        
-        header = ET.SubElement(oxesText, 'header')
-        #<revisionDesc resp="wor">
-        revisionDesc = ET.SubElement(header, 'revisionDesc', resp='wor')
-
-        #<date>
-        dateForm = str(datetime.now().strftime("%Y.%m.%d"))
-        datetoday = ET.SubElement(revisionDesc, 'date')
-        datetoday.text = dateForm
-
-        def projectName(): #is there another easier way? dbName?
-            projectsPath = FLExFDO.FwDirectoryFinder.ProjectsDirectory
-            objs = os.listdir(unicode(projectsPath))
-            dbList = []
-            for f in objs:
-                # if os.path.isdir(os.path.join(projectsPath, f)):
-                    # dbList.append(f)
-                g = os.path.join(projectsPath, f)
-                dbList.append(g)
-            projectDir = max(dbList, key=os.path.getatime)
-            for h in os.listdir(unicode(projectDir)):
-                if h.endswith(".fwdata"):
-                    filenameNoext = os.path.splitext(h)[0]
-                    print("current project is: %s" % filenameNoext)
-                    return filenameNoext 
-        
-        #<para xml:lang="en">
-        domain = os.environ['userdomain'] + '\\' + getpass.getuser()                 
-        longDate = str(datetime.now().strftime("%B %d, %Y at %I:%M %p"))
-        string = projectName() + " exported by " + domain + " on " + longDate
-        para = ET.SubElement(revisionDesc, 'para')
-        para.set('xml:lang','en')
-        para.text = string
-        
-        #<work oxesWork="WBT.tr">
-        work = ET.SubElement(header, 'work', oxesWork='WBT.tr')
-        #<titleGroup>
-        titleGroup = ET.SubElement(work, 'titleGroup')        
-        #<title type="main">
-        title = ET.SubElement(titleGroup, 'title', type='main')
-        #<trGroup>
-        trGroup = ET.SubElement(title, 'trGroup')
-        #<tr>
-        tr = ET.SubElement(trGroup, 'tr')
-        tr.text = "TODO: title of New Testament or Bible goes here"
-        
-        #<contributor role="Translator" ID="wor">DESKTOP-HLVGD70\workother</contributor>
-        contributor = ET.SubElement(work, 'contributor')
-        contributor.set('ID', 'wor')        
-        contributor.set('role', 'Translator')
-        contributor.text = domain  
-    
-    ####<titlePage>####    #line 403 - 423
-        titlePage = ET.SubElement(oxesText, 'titlePage')
-        #<titleGroup>
-        titleGroup = ET.SubElement(titlePage, 'titleGroup')        
-        #<title type="main">
-        title = ET.SubElement(titleGroup, 'title', type='main')
-        #<trGroup>
-        trGroup = ET.SubElement(title, 'trGroup')
-        #<tr>
-        tr = ET.SubElement(trGroup, 'tr')
-        tr.text = "TODO: title of New Testament or Bible goes here"        
-
-    #----------------------------------------------------------------                     
-    
-    def ExportScripture():
-        
-        sCanon = None
-        #iterate through ScriptureBooksOS object for AllBooks
-        #TODO - give options for single books or filtered books - will have to build this myself since FLEx can't be open while this is run
-        for obj in DB.ObjectsIn(ILangProjectRepository):            
-            # bookCount = obj.TranslatedScriptureOA.ScriptureBooksOS.Count
-            for i, book in enumerate(obj.TranslatedScriptureOA.ScriptureBooksOS):
-                ExportBook(book, i)                                 
-
-    #----------------------------------------------------------------   
-
-    def ExportBook(book, i):            
-        
-        def canonExists(oxes, sCanon):  #check for existence of canon tag
-            for i in oxes.findall('.//oxesText'): 
-                for j in i.findall('./canon[@ID="%s"]' % sCanon):
-                    return j
-
-        def createCanon(oxes, sCanon):  #create canon tag 
-            if canonExists(oxes, sCanon) == None:
-                oxesText = oxes.find('.//oxesText')
-                canon = ET.SubElement(oxesText, 'canon', ID=sCanon)                            
-        
-        m_iCurrentBook = book.CanonicalNum
-        m_sCurrentBookId = book.BookId 
-        m_iCurrentChapter = 0
-        m_sCurrentChapterNumber = None
-        m_iCurrentVerse = 0
-        m_sCurrentVerseNumber = None
-               
-        #conditional ternary operator - set the canon value
-        sCanon = 'ot' if book.CanonicalNum < 40 else 'nt'
-        
-        createCanon(oxes, sCanon)
-        #creates book tag
-        bookElement = ET.SubElement(canonExists(oxes, sCanon), 'book', ID=m_sCurrentBookId)   
-
-        ExportBookTitle(book, bookElement)
-              
-    #----------------------------------------------------------------         
-
-
-    def ExportBookTitle(book, bookElement):  #FINISHED
-        
-        titleGroupShort = ITsString(book.Name.BestVernacularAlternative).Text  
-        # print("titleGroupShort is: %s" % titleGroupShort)     #Sifr-İ Raʿos 
-
-        def titleGroupNameFunction():
-            for titlePara in book.TitleOA.ParagraphsOS:  
-                titleGroupName = ITsString(titlePara.Contents).Text       
-                # print("titleGroupName is: %s" % titleGroupName)  #Rût 
-                return titleGroupName
-        
-        titleGroup = ET.SubElement(bookElement, 'titleGroup', short=titleGroupShort)   #Sifr-İ Raʿos     
-        # print("titleGroup is: %s" % titleGroupNameFunction())  
-        title = ET.SubElement(titleGroup, 'title', type="main")
-        trGroup = ET.SubElement(title, 'trGroup')
-        tr = ET.SubElement(trGroup, 'tr')   
-        tr.text = titleGroupNameFunction() #Rût 
-        
-        ExportSection(book, bookElement)
-        
-    def ExportSection(book, bookElement):
-
-        for section in book.SectionsOS:       
-                        
-            sectionElement = ET.SubElement(bookElement, 'section')
-            # print("Section.ContentOA.ParagraphOS Count is: %s" % section.ContentOA.ParagraphsOS.Count)
-            
-            ExportParaHeading(book, section, bookElement, sectionElement)
-            
-    def ExportParaHeading(book, section, bookElement, sectionElement):
-    
-        for paraHeading in section.HeadingOA.ParagraphsOS:
-            sectionHeadTitle = ITsString(paraHeading.Contents).Text
-            # print("sectionHeadTitle is: %s" % sectionHeadTitle)
-            sectionHead = ET.SubElement(sectionElement, 'sectionHead')        
-            trGroup = ET.SubElement(sectionHead, 'trGroup')        
-            tr = ET.SubElement(trGroup, 'tr') 
-            tr.text = sectionHeadTitle
-            
-            ExportPara(book, section, bookElement, sectionElement)
-            
-    def ExportPara(book, section, bookElement, sectionElement):
-            
-        sectionCount = section.ContentOA.ParagraphsOS.Count #not necessary?                
-        totalVerseRefs = []
-
-        for para in section.ContentOA.ParagraphsOS:
-            for paraSub in para: 
-                z = paraSub.StartRef.Verse, paraSub
-                if paraSub.FirstInStText == False:
-                    totalVerseRefs.append(z)
-            
-        enumeration = list(enumerate(totalVerseRefs))        
-        n = 0 #for iterator
-
-        for previousSection, section, nextSection in previous_and_next(enumeration): 
-                                      
-            paraSub = section[1][1]
-            
-            n += 1
-            # print("n is: %s, current verse is: %s" % (n, paraSub.StartRef.Verse))
-
-            bookID = book.BookId
-            chapter = int(paraSub.StartRef.Chapter)
-            verse = int(paraSub.StartRef.Verse)
-            
-            chapterStartString = bookID + '.' + str(chapter)
-            verseStartString = bookID + '.' + str(chapter) + '.' + str(verse)                            
-
-            paraElement = ET.SubElement(sectionElement, 'p')             
-            
-            # if paraSub.FirstInStText == True: 
-                # OpenChapter(paraSub, paraElement, bookID, chapter, verse, sectionCount, chapterStartString)
-                
-            if paraSub.VerseNumberRun == True:
-                if n == 1:
-                    OpenChapter(paraSub, paraElement, bookID, chapter, verse, sectionCount, chapterStartString)
-                
-                OpenVerse(paraSub, paraElement, bookID, chapter, verse, sectionCount, verseStartString)                                        
-                ExportVerse(paraSub, paraElement, bookID, chapter, verse, sectionCount, verseStartString)             
-                if nextSection != None: #catches everything but the last element
-                    # print("current verse is: %s, next verse is: %s" % (section[0],nextSection[0]))                
-                    if section[1][0] < nextSection[1][0]: #only processes elements with one <p>
-                        EndVerse(paraSub, paraElement, bookID, chapter, verse, sectionCount, verseStartString)
-                elif n == len(totalVerseRefs): #processes the very last element
-                    EndVerse(paraSub, paraElement, bookID, chapter, verse, sectionCount, verseStartString)
-                    CloseChapter(paraSub, paraElement, bookID, chapter, verse, sectionCount, chapterStartString)
-                    
-            elif paraSub.VerseNumberRun == False: #catches multi-<p> paragraphs                       
-                ExportVerse(paraSub, paraElement, bookID, chapter, verse, sectionCount, verseStartString)
-                if n == len(totalVerseRefs): ##processes the very last element if it is part of a multi-<p> paragraphs
-                    EndVerse(paraSub, paraElement, bookID, chapter, verse, sectionCount, verseStartString)
-                    CloseChapter(paraSub, paraElement, bookID, chapter, verse, sectionCount, chapterStartString)
-    
-        # print("verse1 are: %s, count is: %s" % (totalVerseRefs,len(totalVerseRefs)))
-        # print("i-s------- are: %s, count is: %s" % (enumeration, len(enumeration)))  
-            
-        # paraElement.insert(1,chapterStartElement)
-        # paraElement.insert(2,verseStartElement)
-        # paraElement.insert(3,trGroupElement)
-        # paraElement.insert(4,verseEndElement)
-        # paraElement.insert(5,chapterEndElement)
-    
-    def OpenChapter(paraSub, paraElement, bookID, chapter, verse, sectionCount, chapterStartString):        
-                       
-        # print("FirstInStText is True")
-        chapterStartElement = ET.SubElement(paraElement, "chapterStart")             
-        chapterStartElement.set('ID',chapterStartString)
-        chapterStartElement.set('n',str(chapter))                       
-
-    def OpenVerse(paraSub, paraElement, bookID, chapter, verse, sectionCount, verseStartString):
-            
-        verseStartElement = ET.SubElement(paraElement, "verseStart")                 
-        verseStartElement.set('ID',verseStartString)
-        verseStartElement.set('n',str(verse))
-        # paraElement.insert(2,verseStartElement)
-        
-    def ExportVerse(paraSub, paraElement, bookID, chapter, verse, sectionCount, verseStartString):                          
-            
-        trGroupElement = ET.SubElement(paraElement, "trGroup")
-        trElement = ET.SubElement(trGroupElement, "tr")                            
-        if paraSub.ChapterNumberRun == False:
-            trElement.text = ITsString(paraSub.Text).Text    
-            # print("verse is: %s" % ITsString(paraSub.Text).Text)
-    
-    def EndVerse(paraSub, paraElement, bookID, chapter, verse, sectionCount, verseStartString):
-        
-        verseEndElement = ET.SubElement(paraElement, "verseEnd")                 
-        verseEndElement.set('ID',verseStartString)
-        verseEndElement.set('n',str(verse))                
-
-    def CloseChapter(paraSub, paraElement, bookID, chapter, verse, sectionCount, chapterStartString):
-    
-        chapterEndElement = ET.SubElement(paraElement, "chapterEnd") 
-        chapterEndElement.set('ID',chapterStartString) 
+end = timer()
+loadtime = (end - start)
+print('loadtime is: %s' % loadtime)
 
 #----------------------------------------------------------------
-    ExportTE()
-    ExportScripture()   
+"""
+Example program to show how to place multiple argument groups as tabs
+"""
+
+import argparse
+from gooey import Gooey, GooeyParser
+
+
+@Gooey(program_name='TE Tools',
+       program_description='Translation Editor Toolbox',
+       tabbed_groups=False,
+       navigation='Sidebar',
+       sidebar_title='Choose Action to run',
+       show_sidebar=True,
+       optional_cols=4,
+       default_size=(800,550),
+       advanced = True)
+def main():
+    settings_msg = 'Example program to show how to place multiple argument groups as tabs'
+    parser = GooeyParser(description=settings_msg)
+    subs = parser.add_subparsers(help='commands', dest='command')
+
+    home = subs.add_parser('Home')
+    # home.add_argument(help='Option one')
+    #can't use add_argument_group to change "required arguments" text, 
+    #that only works with ArgumentParser()
+    home.add_argument(
+        'Welcome to the Translation Editor Toolbox', 
+        default='This is a collection of scripts written for use with the Ottoman Transcription Project\n\n\
+        Instructions:\n\
+        \t- Choose one of the Action scripts on the left\n\
+        \t- Select the options for the script in the interface\n\
+        \t- Cick the START button to run the script\n\
+        \t- The output and results will be shown in the program\n\
+        \t- Afterwards, click the EDIT button to run another script\n\n\
+        ',
+        widget='Textarea',
+        gooey_options={
+            'height': 200,
+            'show_label': True,
+            'show_help': True,
+            'show_border': True
+        }
+                
+    )
+    #home_group.add_argument('-OSM', widget='Textarea')
+
+    export = subs.add_parser('Export')
+    export.add_mutually_exclusive_group(
+        #choices=['one','two'],
+        # gooey_options={
+        #     'initial_selection': 5
+        # }
+        required=True,
+        # gooey_options={
+        #     #title="Choose the file naming scheme", 
+        #     full_width=True
+        # }        
+    )   
+    export.add_argument(
+        "--original_filename", metavar="Keep original filename", action="store_true"
+    )
+    export.add_argument(
+         "--file_prefix",
+        metavar="Create a sequence",
+        help="Choose the file prefix",
+        widget="TextField",
+        default="video",
+    )                        
+
+    anotations = subs.add_parser('Annotations')
+    anotations.add_argument('--opt3', action='store_true',
+                        help='Option three')    
+
+    qa = subs.add_parser('QA')
+    qa.add_argument('--opt4', action='store_true',
+                        help='Option four')                          
+
+    #using add_argument_group lets you eliminates/customize the 'option/required' headings
+    find_replace = subs.add_parser('Find/Replace')
+    find_replace_group = find_replace.add_argument_group("Find-Replace")
+    find_replace_group.add_argument(
+        '--Find what:', 
+        help='Defaults: case insensitive/non-regex/text normalization = NFC\n\
+        Check boxes below for other options.',
+        gooey_options={
+            'show_border': True,            
+            # 'help_bg_color': '#d4193c',
+            # 'help_color': '#f2eded',
+            # 'columns': 4,
+            'full_width': True,
+            'show_help': False
+        }
+    )     
+
+    find_replace_group.add_argument(
+        '--Replace with:', 
+        #help='Defaults: ',
+        gooey_options={
+            'show_border': True,            
+            # 'help_bg_color': '#d4193c',
+            # 'help_color': '#f2eded',
+            # 'columns': 4,
+            'full_width': True,
+            'show_help': False
+        }
+    )                          
+
+    #Search box options for Find/Replace screen
+    find_replace_group_2 = find_replace.add_argument_group(
+        "Search Options",
+        # description='Search Options',
+        gooey_options={
+        'show_border': True,
+        'margin_top': 1               
+        }
+    )
+
+    #using for loop to avoid having to have 5 of these!
+    options = ['Regular Expression',
+        'Match case',
+        'NFC Search mode',
+        'Search Text + Notes',
+        'Search Notes only']
+    for i in options:
+        print(i)        
+        find_replace_group_2.add_argument(
+            '--' + i,
+            help=i,
+            action='store_true',
+            gooey_options={
+                'show_label': False,
+                'show_help': True,
+                'show_border': True
+            }
+        )  
+
+    backup_sync = subs.add_parser('Backup/Sync')
+    backup_sync.add_argument(
+        #'--load',
+        metavar='Select a Project to Export',
+        dest='filename',
+        widget='Dropdown',
+        choices=projects_list(),
+        gooey_options={
+            'validator': {
+                'test': 'user_input != "Select Project"',
+                'message': 'Choose a save file from the list'
+            }
+        }
+    )                        
+
+
+    args=parser.parse_args()
+
+    #display_message()
     
-    xmlfile = 'osm.oxes'
-    tree = ET.ElementTree(oxes)
-    writing = tree.write(xmlfile, encoding="utf-8", xml_declaration=True)      
+def projects_list():
+    
+    #TODO - fill out this function to get all available projects from FDO
+    projects = ['Ali Bey 1665','Kieffer 1827']
+    return projects
+
+
 #----------------------------------------------------------------
 if __name__ == "__main__":
 
-    DB = FLExDBAccess()
-    DB.OpenDatabase("RuthTestFLExTools")
-    print("DB is: %s" % DB)
 
-    python Modules\OSM\OSM.py
+    
+    # databases = ['1665Eski-A','RuthTestFLExTools','1827-12_31_2019','1665 to QA']
+    databases = ['RuthTestFLExTools']
+    for database in databases:
+        start = timer()
+        DB = FLExDBAccess()
+        DB.OpenDatabase(database)
+        print("DB is: %s" % DB)
+
+        
+
+        #running OSM module (export to xml)
+        # OSM.MainFunction(DB)
+        
+        #setup database tables and populate them
+        foo(DB)
+    
+    main()
+

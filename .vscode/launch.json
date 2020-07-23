@@ -16,6 +16,7 @@
             //cd c:\Users\workother\code\TE-Tools
             "program": "${workspaceFolder}\\FLExTools\\TETools.py",
             // "program": "${workspaceFolder}\\FLExTools\\FLExTools.py",
+            // "program": "${workspaceFolder}\\FLExTools\\Modules\\SetString\\setstring.py",
             //set as C:\Windows\SysWow64\cmd.exe
             "console": "integratedTerminal"
         }
