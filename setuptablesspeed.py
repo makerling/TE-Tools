@@ -8,7 +8,7 @@ how to set database to all-in-memory db?
 
 '''
 import sqlite3 as lite
-from SIL.FieldWorks.FDO import (ILangProjectRepository)
+from SIL.FieldWorks.FDO import ILangProjectRepository
 conn = lite.connect("osmtestspeed.db")
 cur = conn.cursor()
 

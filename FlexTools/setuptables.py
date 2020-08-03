@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import sqlite3 as lite
-from SIL.FieldWorks.FDO import (ILangProjectRepository, IStTxtParaFactory, 
-        ITextFactory, IStTextFactory, IScrTxtParaRepository)
+from SIL.FieldWorks.FDO import ILangProjectRepository
 from SIL.FieldWorks.Common.COMInterfaces import ITsString
-from timeit import default_timer as timer
+import re
 
 # conn = lite.connect("osmtest.db")
 # cur = conn.cursor()
@@ -51,6 +50,7 @@ from timeit import default_timer as timer
 # conn.close()
 #----------------------------------------------------------------
 def foo(DB):
+    
     conn = lite.connect("osmtestspeed.db")
     cur = conn.cursor()
 
@@ -79,11 +79,10 @@ def foo(DB):
     id integer,
     bookid text,
     booknum integer,
-    verse verse)
+    verse text)
     """)
     print('finished creating tables, populating them now')
    ################################## verses and refs ###################################
-    startFTtools = timer()
     books_in_proj = []
     verses_in_proj = []
     for obj in DB.ObjectsIn(ILangProjectRepository):            
@@ -98,7 +97,8 @@ def foo(DB):
                             chapter_num = int(paraSub.StartRef.Chapter)
                             verse_num = int(paraSub.StartRef.Verse)
                             ref = bookId + '.' + '%03d.%03d' % (chapter_num,verse_num) #padding to 3 place values
-                            verse_text = ITsString(paraSub.Text).Text
+                            verse_text_w_num = ITsString(paraSub.Text).Text
+                            verse_text = re.sub(r'^(\d+)',r'\1 ',verse_text_w_num) #separates versenum to make search catch all with space
                             verses_in_proj.append(('0',bookNum,ref,verse_text))
 
                             # tss = DB.db.TsStrFactory.MakeString('hello world', '999000008')
@@ -108,11 +108,7 @@ def foo(DB):
     cur.executemany("INSERT INTO verses VALUES(?,?,?,?)", verses_in_proj)
     
     conn.commit()
-    conn.close()
-    
-    end = timer()
-    processtime = (end - startFTtools)
-    print('processtime is: %s' % processtime)
+    conn.close()    
 
     print('finished populating tables')
 

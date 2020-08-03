@@ -1,107 +1,9 @@
 # -*- coding: utf-8 -*-
-#   Project: FlexTools
-#   Module:  FLExTools
-#   Platform: .NET v2 Windows.Forms (Python.NET 2.5)
-#
-#   Main FLexTools UI: loads straight in to configured database and
-#    Collection.
-#    - Split panel with Collections list above and Report results below.
-#
-#
-#   Craig Farrow
-#   Oct 2010
-# TODO: change "messagebox" in imports to tkinter boxes
+
 from timeit import default_timer as timer
-start = timer()
-
-import codecs
-import sys
-sys.stdout = codecs.getwriter("utf-8")(sys.stdout)
-import os
-import traceback
-
-import Version
-try:
-    import FTPaths
-    #import UIGlobal
-    #import UICollections, FTCollections
-    #import UIModulesList, UIReport, UIModuleBrowser
-    #import UIDbChooser
-    import FTModules
-    #import Help
-
-except EnvironmentError, e:
-    # # EnvironmentError is used to communicate a known situation that can be handled,
-    # # typically with a restart.
-    # MessageBox.Show(e.message,
-                    # "FLExTools: Configuring",
-                    # MessageBoxButtons.OK,
-                    # MessageBoxIcon.Information)
-    sys.exit(2)     # Signal a restart
-                    
-except Exception, e:
-    # MessageBox.Show("Error interfacing with Fieldworks:\n%s\n(This version of FLExTools supports Fieldworks versions %s - %s.)\nSee error.log for more details."
-                    # % (e.message, Version.MinFWVersion, Version.MaxFWVersion),
-                    # "FLExTools: Fatal Error",
-                    # MessageBoxButtons.OK,
-                    # MessageBoxIcon.Exclamation)
-    print "Fatal exception during imports:\n%s" % traceback.format_exc()
-    print "FLExTools %s" % Version.number
-    sys.exit(1)
-
-import CDFDotNetUtils
-from CDFConfigStore import CDFConfigStore
-
-import FLExFDO 
-from FLExDBAccess import FLExDBAccess 
-                           
-#opens FLExTools if run from syswow
-#C:\Windows\SysWOW64\cmd.exe
-#set FWVersion=8
-#check_output("C:\\Users\\workother\\code\\TE-Tools\\Python27.NET\\FW8\\python32.exe C:\\Users\\workother\\code\\TE-Tools\\FlexTools\\FLExTools.py")   
-# ------------------------------------------------------------------
-import unicodedata
-from FTModuleClass import *
-import FLExFDO
-from SIL.FieldWorks.FDO import (IScrBookRepository, IScrBook, IScriptureRepository, 
-ILangProjectRepository, IScripture, IScriptureRepository, IStPara, 
-IStParaRepository, IStText, IStTextRepository, IScrSection, IScrSectionRepository)
-
-from SILUBS.SharedScrUtils import *
-
-from SIL.FieldWorks.Common.COMInterfaces import ITsString
-from SIL.FieldWorks.FDO.DomainServices import SegmentServices
-import codecs
-import re
-import sys, os
-import xml.etree.ElementTree as ET
-from xml.dom import minidom
-from datetime import datetime
-import os
-import getpass
-
-from itertools import tee, islice, chain, izip
-from collections import OrderedDict 
-
-import OSM
-from setuptables import foo
-
-import sqlite3 as lite
-from SIL.FieldWorks.FDO import (ILangProjectRepository, IStTxtParaFactory, 
-        ITextFactory, IStTextFactory, IScrTxtParaRepository)
-from SIL.FieldWorks.Common.COMInterfaces import ITsString
-
-end = timer()
-loadtime = (end - start)
-print('loadtime is: %s' % loadtime)
-
-#----------------------------------------------------------------
-"""
-Example program to show how to place multiple argument groups as tabs
-"""
-
 import argparse
 from gooey import Gooey, GooeyParser
+import sql_find_replace as foo
 
 
 @Gooey(program_name='TE Tools',
@@ -111,8 +13,9 @@ from gooey import Gooey, GooeyParser
        sidebar_title='Choose Action to run',
        show_sidebar=True,
        optional_cols=4,
-       default_size=(800,550),
-       advanced = True)
+       default_size=(1100,600),
+       advanced = True,
+       richtext_controls=True)
 def main():
     settings_msg = 'Example program to show how to place multiple argument groups as tabs'
     parser = GooeyParser(description=settings_msg)
@@ -175,32 +78,36 @@ def main():
                         help='Option four')                          
 
     #using add_argument_group lets you eliminates/customize the 'option/required' headings
-    find_replace = subs.add_parser('Find/Replace')
+    find_replace = subs.add_parser('Find_Replace')
     find_replace_group = find_replace.add_argument_group("Find-Replace")
     find_replace_group.add_argument(
-        '--Find what:', 
-        help='Defaults: case insensitive/non-regex/text normalization = NFC\n\
-        Check boxes below for other options.',
+        '-find', #what is seen by user in GUI, can't have spaces or will cause error
+        # '-find', #this is what is called by args to store user input e.g. args.find_what
+        type=str,
+        help='Find what:',
         gooey_options={
-            'show_border': True,            
+            # 'show_border': True,            
             # 'help_bg_color': '#d4193c',
             # 'help_color': '#f2eded',
             # 'columns': 4,
             'full_width': True,
-            'show_help': False
+            'show_help': True,
+            'show_label': False
         }
     )     
 
     find_replace_group.add_argument(
-        '--Replace with:', 
-        #help='Defaults: ',
+        '-replace', 
+        # '--replace',
+        help='Replace with (optional): ',
         gooey_options={
-            'show_border': True,            
+            # 'show_border': True,            
             # 'help_bg_color': '#d4193c',
             # 'help_color': '#f2eded',
             # 'columns': 4,
             'full_width': True,
-            'show_help': False
+            'show_help': True,
+            'show_label': False
         }
     )                          
 
@@ -215,13 +122,15 @@ def main():
     )
 
     #using for loop to avoid having to have 5 of these!
-    options = ['Regular Expression',
+    options = ['regular_expression',
         'Match case',
         'NFC Search mode',
         'Search Text + Notes',
-        'Search Notes only']
+        'Search Notes only',
+        'Match whole word only',
+        'Begins with',
+        'Ends with']
     for i in options:
-        print(i)        
         find_replace_group_2.add_argument(
             '--' + i,
             help=i,
@@ -250,8 +159,13 @@ def main():
 
 
     args=parser.parse_args()
+    run(args) 
 
-    #display_message()
+def run(args):
+    
+    if args.command == "Find_Replace":
+        sql_find_replace_function(args)
+        
     
 def projects_list():
     
@@ -259,12 +173,20 @@ def projects_list():
     projects = ['Ali Bey 1665','Kieffer 1827']
     return projects
 
-
-#----------------------------------------------------------------
-if __name__ == "__main__":
-
-
+def sql_find_replace_function(args):
     
+    query = args.find
+    replace_text = args.replace
+
+    # print('find input is: %s' % query)
+    # if replace_text is None:
+    #     print('find only, no replace')
+    # else:
+    #     print('replace input is: %s' % replace_text)    
+
+    foo.main(args, query, replace_text)
+
+def pick_databases():
     # databases = ['1665Eski-A','RuthTestFLExTools','1827-12_31_2019','1665 to QA']
     databases = ['RuthTestFLExTools']
     for database in databases:
@@ -273,13 +195,37 @@ if __name__ == "__main__":
         DB.OpenDatabase(database)
         print("DB is: %s" % DB)
 
-        
+def osm_export():
 
         #running OSM module (export to xml)
-        # OSM.MainFunction(DB)
-        
-        #setup database tables and populate them
-        foo(DB)
-    
+        OSM.MainFunction(DB)
+
+#----------------------------------------------------------------
+if __name__ == "__main__":
+
+    from subprocess import check_output 
+
+    # def sql():
+
+    #     databases = ['RuthTestFLExTools','1665Eski-A']
+    #     for database in databases:
+    #         start = timer()
+    #         DB = FLExDBAccess()
+    #         DB.OpenDatabase(database)
+    #         print("DB is: %s" % DB)        
+    #         # setup database tables and populate them
+    #         foo(DB)
+
+    start = timer()
+
+    dbloading = check_output(".\\Python27.NET\\FW8\\python32.exe .\\FlexTools\\FDO2sqlite.py")             
+    # print(dbloading)
+
+    end = timer()
+    loadtime = (end - start)
+    print('loadtime of is:%s' % loadtime)
     main()
+    # sql()
+
+    
 
