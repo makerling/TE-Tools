@@ -35,7 +35,7 @@ def main(args, query, replace_text):
 
     # if replace_text == None:
     # print('replace text is: %s' % replace_text)
-    find_only(query)
+    # find_only(query)
 
     #'regexquery' for regex, 'replace' for normal replace
     # regex_search('replace', query, replace_text)    
