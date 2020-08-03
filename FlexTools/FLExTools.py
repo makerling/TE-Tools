@@ -53,6 +53,34 @@ try:
     import FTModules
     import Help
 
+    # ---------
+    import FLExFDO
+    from FLExDBAccess import FLExDBAccess
+
+# ---------
+# import unicodedata
+# from FTModuleClass import *
+# import FLExFDO
+# from SIL.FieldWorks.FDO import (IScrBookRepository, IScrBook, IScriptureRepository, 
+# ILangProjectRepository, IScripture, IScriptureRepository, IStPara, 
+# IStParaRepository, IStText, IStTextRepository, IScrSection, IScrSectionRepository)
+
+# from SILUBS.SharedScrUtils import *
+
+# from SIL.FieldWorks.Common.COMInterfaces import ITsString
+# from SIL.FieldWorks.FDO.DomainServices import SegmentServices
+# import codecs
+# import re
+# import sys, os
+# import xml.etree.ElementTree as ET
+# from xml.dom import minidom
+# from datetime import datetime
+# import os
+# import getpass
+
+# from itertools import tee, islice, chain, izip
+# from collections import OrderedDict 
+
 except EnvironmentError, e:
     # EnvironmentError is used to communicate a known situation that can be handled,
     # typically with a restart.
@@ -517,11 +545,12 @@ class FTMainForm (Form):
 
 # ------------------------------------------------------------------
 
-
 if __name__ == "__main__":
 
     form = FTMainForm()
 
     Application.Run(form)
 
-
+    # db = FLExDBAccess()
+    # db.OpenDatabase("RuthTestFLExTools")
+    # print("DB is: %s" % db)
