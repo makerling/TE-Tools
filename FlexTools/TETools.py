@@ -177,14 +177,14 @@ def sql_find_replace_function(args):
     
     query = args.find
     replace_text = args.replace
+    query_type = 'replace' if args.regular_expression else 'regexp'
 
-    # print('find input is: %s' % query)
-    # if replace_text is None:
-    #     print('find only, no replace')
-    # else:
-    #     print('replace input is: %s' % replace_text)    
-
-    foo.main(args, query, replace_text)
+    if replace_text is None:
+        # replace() & regexp() function errors when replace_text is None, workaround to still get pre/post replace strings
+        replace_text = query 
+        foo.main(args, query_type, query, replace_text) #, replace=False)
+    else:   
+        foo.main(args, query_type, query, replace_text) #, replace=True)
 
 def pick_databases():
     # databases = ['1665Eski-A','RuthTestFLExTools','1827-12_31_2019','1665 to QA']
@@ -223,7 +223,7 @@ if __name__ == "__main__":
 
     end = timer()
     loadtime = (end - start)
-    print('loadtime of is:%s' % loadtime)
+    # print('loadtime of is:%s' % loadtime)
     main()
     # sql()
 

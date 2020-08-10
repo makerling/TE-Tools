@@ -35,7 +35,7 @@ import re
 # id integer,
 # bibleTitleId integer,
 # verseid text,
-# verse text)
+# verse text,)
 # """) 
 
 # cur.execute("INSERT INTO verses VALUES(:id, :bibleTitleId, :verseid, :verse)", 
@@ -51,7 +51,7 @@ import re
 #----------------------------------------------------------------
 def foo(DB):
     
-    conn = lite.connect("osmtestspeed.db")
+    conn = lite.connect("FlexTools\\osmtestspeed.db")
     cur = conn.cursor()
 
     cur.execute("DROP TABLE IF EXISTS bibleTitles")
@@ -79,7 +79,8 @@ def foo(DB):
     id integer,
     bookid text,
     booknum integer,
-    verse text)
+    verse text,
+    origverse text)
     """)
     print('finished creating tables, populating them now')
    ################################## verses and refs ###################################
@@ -99,15 +100,31 @@ def foo(DB):
                             ref = bookId + '.' + '%03d.%03d' % (chapter_num,verse_num) #padding to 3 place values
                             verse_text_w_num = ITsString(paraSub.Text).Text
                             verse_text = re.sub(r'^(\d+)',r'\1 ',verse_text_w_num) #separates versenum to make search catch all with space
-                            verses_in_proj.append(('0',bookNum,ref,verse_text))
+                            verses_in_proj.append(('0',bookNum,ref,verse_text,None))
 
                             # tss = DB.db.TsStrFactory.MakeString('hello world', '999000008')
                             # scrTxtPara.Contents = tss
 
     cur.executemany("INSERT INTO books VALUES(?,?,?,?)", books_in_proj)
-    cur.executemany("INSERT INTO verses VALUES(?,?,?,?)", verses_in_proj)
-    
+    cur.executemany("INSERT INTO verses VALUES(?,?,?,?,?)", verses_in_proj)
+
     conn.commit()
+
+    #adding trigger to identify rows that have been changed in UPDATE statement
+    # updateFlag = '1', might need to add this before origverses line
+    cur.execute("""
+    CREATE TRIGGER IF NOT EXISTS trig
+    AFTER UPDATE on verses 
+    FOR EACH ROW 
+        WHEN old.origverse IS NULL
+    BEGIN 
+        UPDATE verses SET             
+            origverse = verse
+        WHERE rowid = NEW.rowid;
+    END;
+    """)
+    conn.commit()
+
     conn.close()    
 
     print('finished populating tables')

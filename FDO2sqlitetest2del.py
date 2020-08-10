@@ -1,6 +1,6 @@
 import sqlite3, re
 
-db = sqlite3.connect('osmtesting.db')
+db = sqlite3.connect('osmtestspeed.db')
 c = db.cursor()
 
 # def preg_replace(string, pattern, replace):
