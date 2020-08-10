@@ -2,7 +2,7 @@
 
 pushd FlexTools
 
-call ..\py_net FlexTools.py >..\error.log %*
+call ..\py_net TETools.py >..\error.log %*
 
 popd
 
