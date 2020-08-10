@@ -8,7 +8,7 @@ Set WshShell = CreateObject("WScript.Shell")
 
 WshShell.CurrentDirectory = "FlexTools"
 
-WshShell.Run "..\py_net.bat FLExTools.py >..\error.log", 0
+WshShell.Run "..\py_net.bat TETools.py >..\error.log", 0
 
 WScript.Sleep (1000)			'Give time for FlexTools to start
 WshShell.AppActivate("FlexTools ")	'Bring to front
