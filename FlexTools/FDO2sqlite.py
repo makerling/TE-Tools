@@ -28,7 +28,7 @@ except Exception, e:
     sys.exit(1)
 # ------------------------------------------------------------------
 from FLExDBAccess import FLExDBAccess                            
-from setuptables import foo
+from setuptables import extracttoSQL
 #----------------------------
 end = timer()
 loadtime = (end - start)
@@ -39,13 +39,13 @@ if __name__ == "__main__":
     print('FWAppVersion is: %s' % FWAppVersion)
     def sql():
 
-        databases = ['RuthTestFLExTools']
+        databases = ['1665Eski-A','1665Eski-B','1665NT','1819NT','1827HB-A','1827HB-B','1827NT','1852GenPsa','1857NT','1866NT','1868Psalms','1876Isaiah','1877Torah','1886HB-A','1886HB-B','1886NT']
         for database in databases:
             DB = FLExDBAccess()
             DB.OpenDatabase(database)
             print("DB is: %s" % DB)        
             # setup database tables and populate them
-            foo(DB)        
+            extracttoSQL(DB)        
 
     # main()
     sql()

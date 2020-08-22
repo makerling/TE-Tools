@@ -2,9 +2,9 @@
 import sqlite3, re
 from colored import stylize, attr, fg
 
-def main(args, query_type, query, replace_text):
+def main(args):
 
-    db = sqlite3.connect('osmtestspeed.db')
+    db = sqlite3.connect('FlexTools\\osmtestspeed.db')
     c = db.cursor()
 
     ####################### BULK REPLACE FUNCTIONS - REGEX AND STANDARD FIND/REPLACE #######################
@@ -23,7 +23,7 @@ def main(args, query_type, query, replace_text):
             WHERE verse 
                 MATCH '""" + query + """' 
             """)
-        return(c.fetchall())
+        return c.fetchall()
     ############################## FIND FUNCTIONS - REGEX AND STANDARD FIND ################################
     db.create_function('match', 2, lambda x, y: 1 if re.findall(x, y) else 0)
     
@@ -38,23 +38,32 @@ def main(args, query_type, query, replace_text):
             """)    
         return c.fetchall()   
     #########################################################################################################
-
-    # runs query before replace to generate printed results of pre and post replaced strings
-    findQueryResults = findQuery(query_type, query, replace_text)    
     
+    # replace() & regexp() function errors when replace_text is None, workaround to still get pre/post replace strings
+    # replace_text = query if replace_text is None     
+
+    query = args.find    
+    # determines if query should be using built-in replace() or custom regexp()
+    query_type = 'replace' if args.Regex == False else 'regexp'
+    # determines if only find should be run or find and replace
+    replace_text = query if args.replace == None else args.replace
+    print(query_type)
+
+    findQueryResults = findQuery(query_type, query, replace_text) 
+    print(findQueryResults)
     # loops through results of query and highlights search term/replace term
     for i in findQueryResults:
-        oldstring = stylize(''.join(re.findall(query,i[0])), attr('bold'))
+        oldstring = stylize(re.findall(query,i[0])[0], attr('bold')) # need to select first result of re.findall
         newstring = stylize(replace_text, attr('bold')) # TODO implement regex backreferences 
         old_string_formatted = re.sub(query, oldstring,i[0]) 
         new_string_formatted = re.sub(replace_text, newstring,i[1])
 
         # adding replace strings to output only if text is put into 'Replace' field
         if replace_text == query:
-            print(' found:     ', old_string_formatted, replaceString, '\\\n')
+            print(' found:     ', old_string_formatted)
         else:
             # actual database find/replace
-            replaceQuery = replaceQuery(query_type,query, replace_text) 
+            replaceQuery(query_type,query, replace_text) 
             print(' found:     ', old_string_formatted, '\\\n', 'replaced: ', new_string_formatted, '\\\n') 
 
     print('match(es) found in', len(findQueryResults), 'verse(s)')

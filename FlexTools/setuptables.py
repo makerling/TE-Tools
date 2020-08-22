@@ -49,40 +49,40 @@ import re
 # conn.commit()
 # conn.close()
 #----------------------------------------------------------------
-def foo(DB):
+def extracttoSQL(DB):
     
     conn = lite.connect("FlexTools\\osmtestspeed.db")
     cur = conn.cursor()
 
-    cur.execute("DROP TABLE IF EXISTS bibleTitles")
+    # cur.execute("DROP TABLE IF EXISTS bibleTitles")
 
-    cur.execute("""
-    CREATE TABLE bibleTitles(
-    id integer,
-    title text)
-    """)
+    # cur.execute("""
+    # CREATE TABLE bibleTitles(
+    # id integer,
+    # title text)
+    # """)
 
-    cur.execute("DROP TABLE IF EXISTS books")
+    # cur.execute("DROP TABLE IF EXISTS books")
 
-    cur.execute("""
-    CREATE TABLE books(
-    id integer,
-    bookid text,
-    booknum integer,
-    title text)
-    """)
+    # cur.execute("""
+    # CREATE TABLE books(
+    # id integer,
+    # bookid text,
+    # booknum integer,
+    # title text)
+    # """)
 
-    cur.execute("DROP TABLE IF EXISTS verses")
+    # cur.execute("DROP TABLE IF EXISTS verses")
 
-    cur.execute("""
-    CREATE TABLE verses(
-    id integer,
-    bookid text,
-    booknum integer,
-    verse text,
-    origverse text)
-    """)
-    print('finished creating tables, populating them now')
+    # cur.execute("""
+    # CREATE TABLE verses(
+    # id integer,
+    # bookid text,
+    # booknum integer,
+    # verse text,
+    # origverse text)
+    # """)
+    # print('finished creating tables, populating them now')
    ################################## verses and refs ###################################
     books_in_proj = []
     verses_in_proj = []
@@ -112,18 +112,18 @@ def foo(DB):
 
     #adding trigger to identify rows that have been changed in UPDATE statement
     # updateFlag = '1', might need to add this before origverses line
-    cur.execute("""
-    CREATE TRIGGER IF NOT EXISTS trig
-    AFTER UPDATE on verses 
-    FOR EACH ROW 
-        WHEN old.origverse IS NULL
-    BEGIN 
-        UPDATE verses SET             
-            origverse = verse
-        WHERE rowid = NEW.rowid;
-    END;
-    """)
-    conn.commit()
+    # cur.execute("""
+    # CREATE TRIGGER IF NOT EXISTS trig
+    # AFTER UPDATE on verses 
+    # FOR EACH ROW 
+    #     WHEN old.origverse IS NULL
+    # BEGIN 
+    #     UPDATE verses SET             
+    #         origverse = verse
+    #     WHERE rowid = NEW.rowid;
+    # END;
+    # """)
+    # conn.commit()
 
     conn.close()    
 
@@ -132,7 +132,7 @@ def foo(DB):
 #----------------------------------------------------------------
 if __name__ == "__main__":    
 
-    foo(DB)
+    extracttoSQL(DB)
        
                             
     '''

@@ -3,7 +3,7 @@
 from timeit import default_timer as timer
 import argparse
 from gooey import Gooey, GooeyParser
-import sql_find_replace as foo
+import sql_find_replace
 
 
 @Gooey(program_name='TE Tools',
@@ -44,42 +44,40 @@ def main():
         }
                 
     )
-    #home_group.add_argument('-OSM', widget='Textarea')
+    # export = subs.add_parser('Export')
+    # export.add_mutually_exclusive_group(
+    #     #choices=['one','two'],
+    #     # gooey_options={
+    #     #     'initial_selection': 5
+    #     # }
+    #     required=True,
+    #     # gooey_options={
+    #     #     #title="Choose the file naming scheme", 
+    #     #     full_width=True
+    #     # }        
+    # )   
+    # export.add_argument(
+    #     "--original_filename", metavar="Keep original filename", action="store_true"
+    # )
+    # export.add_argument(
+    #      "--file_prefix",
+    #     metavar="Create a sequence",
+    #     help="Choose the file prefix",
+    #     widget="TextField",
+    #     default="video",
+    # )                        
 
-    export = subs.add_parser('Export')
-    export.add_mutually_exclusive_group(
-        #choices=['one','two'],
-        # gooey_options={
-        #     'initial_selection': 5
-        # }
-        required=True,
-        # gooey_options={
-        #     #title="Choose the file naming scheme", 
-        #     full_width=True
-        # }        
-    )   
-    export.add_argument(
-        "--original_filename", metavar="Keep original filename", action="store_true"
-    )
-    export.add_argument(
-         "--file_prefix",
-        metavar="Create a sequence",
-        help="Choose the file prefix",
-        widget="TextField",
-        default="video",
-    )                        
+    # anotations = subs.add_parser('Annotations')
+    # anotations.add_argument('--opt3', action='store_true',
+    #                     help='Option three')    
 
-    anotations = subs.add_parser('Annotations')
-    anotations.add_argument('--opt3', action='store_true',
-                        help='Option three')    
-
-    qa = subs.add_parser('QA')
-    qa.add_argument('--opt4', action='store_true',
-                        help='Option four')                          
+    # qa = subs.add_parser('QA')
+    # qa.add_argument('--opt4', action='store_true',
+    #                     help='Option four')                          
 
     #using add_argument_group lets you eliminates/customize the 'option/required' headings
-    find_replace = subs.add_parser('Find_Replace')
-    find_replace_group = find_replace.add_argument_group("Find-Replace")
+    find_replace = subs.add_parser('Find/Bulk-Replace')
+    find_replace_group = find_replace.add_argument_group("Find/Bulk Replace")
     find_replace_group.add_argument(
         '-find', #what is seen by user in GUI, can't have spaces or will cause error
         # '-find', #this is what is called by args to store user input e.g. args.find_what
@@ -122,14 +120,15 @@ def main():
     )
 
     #using for loop to avoid having to have 5 of these!
-    options = ['regular_expression',
-        'Match case',
+    """TODO implement: 'Match case',
         'NFC Search mode',
         'Search Text + Notes',
         'Search Notes only',
         'Match whole word only',
         'Begins with',
-        'Ends with']
+        'Ends with'"""
+
+    options = ['Regex']
     for i in options:
         find_replace_group_2.add_argument(
             '--' + i,
@@ -142,20 +141,20 @@ def main():
             }
         )  
 
-    backup_sync = subs.add_parser('Backup/Sync')
-    backup_sync.add_argument(
-        #'--load',
-        metavar='Select a Project to Export',
-        dest='filename',
-        widget='Dropdown',
-        choices=projects_list(),
-        gooey_options={
-            'validator': {
-                'test': 'user_input != "Select Project"',
-                'message': 'Choose a save file from the list'
-            }
-        }
-    )                        
+    # backup_sync = subs.add_parser('Backup/Sync')
+    # backup_sync.add_argument(
+    #     #'--load',
+    #     metavar='Select a Project to Export',
+    #     dest='filename',
+    #     widget='Dropdown',
+    #     choices=projects_list(),
+    #     gooey_options={
+    #         'validator': {
+    #             'test': 'user_input != "Select Project"',
+    #             'message': 'Choose a save file from the list'
+    #         }
+    #     }
+    # )                        
 
 
     args=parser.parse_args()
@@ -163,58 +162,13 @@ def main():
 
 def run(args):
     
-    if args.command == "Find_Replace":
-        sql_find_replace_function(args)
-        
+    if args.command == "Find/Bulk-Replace":
+        sql_find_replace.main(args)
     
-def projects_list():
-    
-    #TODO - fill out this function to get all available projects from FDO
-    projects = ['Ali Bey 1665','Kieffer 1827']
-    return projects
-
-def sql_find_replace_function(args):
-    
-    query = args.find
-    replace_text = args.replace
-    query_type = 'replace' if args.regular_expression else 'regexp'
-
-    if replace_text is None:
-        # replace() & regexp() function errors when replace_text is None, workaround to still get pre/post replace strings
-        replace_text = query 
-        foo.main(args, query_type, query, replace_text) #, replace=False)
-    else:   
-        foo.main(args, query_type, query, replace_text) #, replace=True)
-
-def pick_databases():
-    # databases = ['1665Eski-A','RuthTestFLExTools','1827-12_31_2019','1665 to QA']
-    databases = ['RuthTestFLExTools']
-    for database in databases:
-        start = timer()
-        DB = FLExDBAccess()
-        DB.OpenDatabase(database)
-        print("DB is: %s" % DB)
-
-def osm_export():
-
-        #running OSM module (export to xml)
-        OSM.MainFunction(DB)
-
 #----------------------------------------------------------------
 if __name__ == "__main__":
 
     from subprocess import check_output 
-
-    # def sql():
-
-    #     databases = ['RuthTestFLExTools','1665Eski-A']
-    #     for database in databases:
-    #         start = timer()
-    #         DB = FLExDBAccess()
-    #         DB.OpenDatabase(database)
-    #         print("DB is: %s" % DB)        
-    #         # setup database tables and populate them
-    #         foo(DB)
 
     start = timer()
 
