@@ -3,7 +3,7 @@
 from timeit import default_timer as timer
 import argparse
 from gooey import Gooey, GooeyParser
-import sql_find_replace
+import sql_find_replace_class
 
 
 @Gooey(program_name='TE Tools',
@@ -163,7 +163,7 @@ def main():
 def run(args):
     
     if args.command == "Find/Bulk-Replace":
-        sql_find_replace.main(args)
+        sql_find_replace_class.main(args)
     
 #----------------------------------------------------------------
 if __name__ == "__main__":
@@ -172,7 +172,7 @@ if __name__ == "__main__":
 
     start = timer()
 
-    dbloading = check_output(".\\Python27.NET\\FW8\\python32.exe .\\FlexTools\\FDO2sqlite.py")             
+    #dbloading = check_output(".\\Python27.NET\\FW8\\python32.exe .\\FlexTools\\FDO2sqlite.py")             
     # print(dbloading)
 
     end = timer()
