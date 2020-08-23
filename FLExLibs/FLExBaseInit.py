@@ -304,31 +304,31 @@ def FWConfigureManifest():
 #----------------------------------------------------------------
 
 # Configure the path to find the library modules.
-import site
-site.addsitedir("../")
+# import site
+# site.addsitedir("../")
 
-print "SYS.PATH:"
-for x in sys.path: print x
+# print "SYS.PATH:"
+# for x in sys.path: print x
 
-from CDFConfigStore import CDFConfigStore
+# from CDFConfigStore import CDFConfigStore
 
-FWVERSIONFILE = "__FWVersion.ini"
-FWVersionStore = CDFConfigStore(FWVERSIONFILE)
+# FWVERSIONFILE = "__FWVersion.ini"
+# FWVersionStore = CDFConfigStore(FWVERSIONFILE)
 
-if FWVersionStore.Version <> FWFullVersion:
-    print "Startup: Saved FW Version updated -", FWVersionStore.Version, "-->", FWFullVersion
-    FWVersionStore.Version = FWFullVersion
+# if FWVersionStore.Version <> FWFullVersion:
+    # print "Startup: Saved FW Version updated -", FWVersionStore.Version, "-->", FWFullVersion
+    # FWVersionStore.Version = FWFullVersion
     
-    # Configure Fieldworks DLLs and manifest since the FW version has changed.
-    FWConfigureDLLs()
-    restartRequired = FWConfigureManifest()
+    # # Configure Fieldworks DLLs and manifest since the FW version has changed.
+    # FWConfigureDLLs()
+    # restartRequired = FWConfigureManifest()
     
-    # Save the file before restart (but after the call to FWConfigureManifest()
-    # in case something fails in there.)
-    del FWVersionStore          
+    # # Save the file before restart (but after the call to FWConfigureManifest()
+    # # in case something fails in there.)
+    # del FWVersionStore          
     
-    if restartRequired:
-        print "Startup: Restart required."
-        print
-        raise EnvironmentError("FLExTools has updated its configuration to match the new version of Fieldworks. Restarting.")
+    # if restartRequired:
+        # print "Startup: Restart required."
+        # print
+        # raise EnvironmentError("FLExTools has updated its configuration to match the new version of Fieldworks. Restarting.")
         
