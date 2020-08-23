@@ -69,11 +69,11 @@ def main(args):
     # determines if only find should be run or find and replace
     replace_text = query if args.replace == None else args.replace  
 
-    ############# running query/replace/stylize #################
+    ######## running query/replace/stylize functions ###########
     term1 = Term(query, query_type, replace_text)
     findTermResults = term1.findTerm()
     result = term1.stylizeResult(findTermResults) # result is list of tuples 
-    # adding replace strings to output only if text is put into 'Replace' field
+    # adding replace strings to output only if 'Replace' field contains text
     if replace_text == query:
         for i in result:
             print(' found:     ', i[0])
