@@ -11,7 +11,7 @@ class Term:
         self.query_type = query_type
         # determines if only find should be run or find and replace
         self.replace_text = replace_text
-        self.db = sqlite3.connect('FlexTools\\osmtestspeed.db')
+        self.db = sqlite3.connect('osmtestspeed.db')
         self.c = self.db.cursor()        
 
     ####################### BULK REPLACE FUNCTIONS - REGEX AND STANDARD FIND/REPLACE #######################

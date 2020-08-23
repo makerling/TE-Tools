@@ -172,7 +172,7 @@ if __name__ == "__main__":
 
     start = timer()
 
-    dbloading = check_output(".\\Python27.NET\\FW8\\python32.exe .\\FlexTools\\FDO2sqlite.py")             
+    dbloading = check_output(".\\TELibs\\Python27.NET\\FW8\\python32.exe FDO2sqlite.py")             
     # print(dbloading)
 
     end = timer()

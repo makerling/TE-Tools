@@ -51,7 +51,7 @@ import re
 #----------------------------------------------------------------
 def extracttoSQL(DB):
     
-    conn = lite.connect("FlexTools\\osmtestspeed.db")
+    conn = lite.connect("osmtestspeed.db")
     cur = conn.cursor()
 
     # cur.execute("DROP TABLE IF EXISTS bibleTitles")
