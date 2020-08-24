@@ -3,7 +3,7 @@
     // Hover to view descriptions of existing attributes.
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
-    "python": ["${workspaceFolder}\Python27.NET\FW8\python32.exe FLExTools.py"],
+    "python": ["${workspaceFolder}\TELibs\Python27.NET\FW8\python32.exe FLExTools.py"],
     "configurations": [
         
         {
@@ -14,7 +14,7 @@
                 "FWVersion": "8"
             },
             //cd c:\Users\workother\code\TE-Tools
-            "program": "${workspaceFolder}\\FLExTools\\TETools.py",
+            "program": "${workspaceFolder}\\Actions\\TETools.py",
             // "program": "${workspaceFolder}\\FLExTools\\FDO2sqlite.py",
             // "program": "${workspaceFolder}\\FLExTools\\FLExTools.py",
             // "program": "${workspaceFolder}\\FLExTools\\Modules\\SetString\\setstring.py",
