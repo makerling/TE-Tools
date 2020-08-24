@@ -4,12 +4,12 @@ from colored import stylize, attr, fg
 from pathlib import Path
 
 class Term:
-    
-    # platform independent file path solution
-    db_path = Path("Actions/")
 
     def __init__(self, query, query_type, replace_text):
          
+        # platform independent file path solution
+        db_path = Path("Actions/")
+                
         self.query = query
         # determines if query should be using built-in replace() or custom regexp()
         self.query_type = query_type
