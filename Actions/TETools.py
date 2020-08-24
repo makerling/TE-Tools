@@ -167,16 +167,4 @@ def run(args):
     
 #----------------------------------------------------------------
 if __name__ == "__main__":
-
-    # from subprocess import check_output 
-
-    # start = timer()
-
-    # dbloading = check_output(".\\TELibs\\Python27.NET\\FW8\\python32.exe .\\Actions\\FDO2sqlite.py")             
-    # print(dbloading)
-
-    # end = timer()
-    # loadtime = (end - start)
-    # print('loadtime of is:%s' % loadtime)
     main()
-    # sql()

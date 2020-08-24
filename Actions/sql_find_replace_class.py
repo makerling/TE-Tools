@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 import sqlite3, re
 from colored import stylize, attr, fg 
+from pathlib import Path
 
 class Term:
     
+    db_path = Path("Actions/project.db")
+
     def __init__(self, query, query_type, replace_text):
          
         self.query = query
@@ -11,7 +14,7 @@ class Term:
         self.query_type = query_type
         # determines if only find should be run or find and replace
         self.replace_text = replace_text
-        self.db = sqlite3.connect('Actions\\project.db')
+        self.db = sqlite3.connect('Actions/project.db')
         self.c = self.db.cursor()
         # order of re.sub is weird because replaceTerm() is written to default to replace() order of arguments
         self.regexp = self.db.create_function('regexp', 3, lambda x, y, z: re.sub(y, z, x))
