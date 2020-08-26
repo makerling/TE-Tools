@@ -17,14 +17,17 @@ class Term:
         self.replace_text = replace_text
         self.db = sqlite3.connect(db_path / 'project.db')
         self.c = self.db.cursor()
+        # can't use this construction because unit test won't work
         # order of re.sub is weird because replaceTerm() is written to default to replace() order of arguments
-        self.regexp = self.db.create_function('regexp', 3, lambda x, y, z: re.sub(y, z, x))
-        self.match = self.db.create_function('match', 2, lambda x, y: 1 if re.findall(x, y) else 0)  
+        # self.regexp = self.db.create_function('regexp', 3, lambda x, y, z: re.sub(y, z, x))
+        # self.match = self.db.create_function('match', 2, lambda x, y: 1 if re.findall(x, y) else 0)  
 
     ####################### BULK REPLACE FUNCTIONS - REGEX AND STANDARD FIND/REPLACE #######################        
 
     # query_type determines whether the replace is built-in (non-regex) replace() or user-defined function regexp()
-    def replaceTerm(self):           
+    def replaceTerm(self):     
+        self.db.create_function('regexp', 3, lambda x, y, z: re.sub(y, z, x))
+        self.db.create_function('match', 2, lambda x, y: 1 if re.findall(x, y) else 0)               
         # without WHERE statement entire database is updated, affects trigger        
         self.c.execute("""
             UPDATE verses 
@@ -37,7 +40,9 @@ class Term:
     ############################## FIND FUNCTIONS - REGEX AND STANDARD FIND ################################ 
     
     #returns verse string pre and post replace, doesn't actually make any replacements (because of SELECT)
-    def findTerm(self):              
+    def findTerm(self):      
+        self.db.create_function('regexp', 3, lambda x, y, z: re.sub(y, z, x))
+        self.db.create_function('match', 2, lambda x, y: 1 if re.findall(x, y) else 0)                               
         self.c.execute("""
             SELECT verse, 
                 """ + self.query_type + """(verse, '""" + self.query + """', '""" + self.replace_text + """') 
