@@ -23,8 +23,8 @@ def main():
 
     home = subs.add_parser('Home')
     # home.add_argument(help='Option one')
-    #can't use add_argument_group to change "required arguments" text, 
-    #that only works with ArgumentParser()
+    # can't use add_argument_group to change "required arguments" text, 
+    # that only works with ArgumentParser()
     home.add_argument(
         'Welcome to the Translation Editor Toolbox', 
         default='This is a collection of scripts written for use with the Ottoman Transcription Project\n\n\
@@ -65,15 +65,7 @@ def main():
     #     help="Choose the file prefix",
     #     widget="TextField",
     #     default="video",
-    # )                        
-
-    # anotations = subs.add_parser('Annotations')
-    # anotations.add_argument('--opt3', action='store_true',
-    #                     help='Option three')    
-
-    # qa = subs.add_parser('QA')
-    # qa.add_argument('--opt4', action='store_true',
-    #                     help='Option four')                          
+    # )                                              
 
     #using add_argument_group lets you eliminates/customize the 'option/required' headings
     find_replace = subs.add_parser('Find/Bulk-Replace')
@@ -112,7 +104,6 @@ def main():
     #Search box options for Find/Replace screen
     find_replace_group_2 = find_replace.add_argument_group(
         "Search Options",
-        # description='Search Options',
         gooey_options={
         'show_border': True,
         'margin_top': 1               
@@ -140,23 +131,7 @@ def main():
                 'show_border': True
             }
         )  
-
-    # backup_sync = subs.add_parser('Backup/Sync')
-    # backup_sync.add_argument(
-    #     #'--load',
-    #     metavar='Select a Project to Export',
-    #     dest='filename',
-    #     widget='Dropdown',
-    #     choices=projects_list(),
-    #     gooey_options={
-    #         'validator': {
-    #             'test': 'user_input != "Select Project"',
-    #             'message': 'Choose a save file from the list'
-    #         }
-    #     }
-    # )                        
-
-
+                    
     args=parser.parse_args()
     run(args) 
 
