@@ -3,7 +3,7 @@
 from timeit import default_timer as timer
 import argparse
 from gooey import Gooey, GooeyParser
-import sql_find_replace_class
+import Actions.sql_find_replace_class as sql_find_replace_class
 
 
 @Gooey(program_name='TE Tools',
