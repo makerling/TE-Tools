@@ -9,5 +9,4 @@ INSTALL:
 - download this code and unzip: https://codeload.github.com/makerling/TE-Tools/zip/master  
 
 RUN:
-- click the FlexTools.vbs or FlexTools_Debug.bat file to load the program
-
+- run the program with the TETools.py file
