@@ -76,7 +76,6 @@ def main(args):
     ######## running query/replace/stylize functions ###########
     term1 = Term(query, query_type, replace_text)
     findTermResults = term1.findTerm()
-    # print(findTermResults)
     result = term1.stylizeResult(findTermResults) # result is list of tuples 
     # adding replace strings to output only if 'Replace' field contains text
     if replace_text == query:
@@ -94,4 +93,4 @@ def main(args):
     term1.db.close()  
 
 if __name__ == "__main__":
-    main(arg)
+    main(args)

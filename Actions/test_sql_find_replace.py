@@ -18,24 +18,34 @@ class testsqlfindreplace(unittest.TestCase):
             origverse text)
         """)      
 
-        self.verses = [(0,8,"RUT.001.005","5 ȯndan Mahlon ve Kilyon ikisi de öldüler",None), 
+        self.verses = [(0,8,"RUT.001.005","5 ȯndan Mahlon ikisi de öldüler",None), 
+            (0,8,"RUT.001.005","5 ȯndan Kilyona ikisi de öldüler",None), 
             (0,8,"RUT.001.003",'3 ondan Naominin kocasi Elimelek oldu',None), 
             (0,8,"RUT.001.003",'3 ȯndan Naʿominiŋ kocası Elimelek ȯndan öldü',None)] # testing repeat words
 
 
         self.c.executemany("INSERT INTO verses VALUES(?,?,?,?,?)", self.verses)
 
-        self.query_type = 'replace'
-        self.query = 'Mahlon'
-        self.replace_text = 'Magoo'
+    # def test_findTermfunction(self):
+    #     self.query_type = 'replace'
+    #     self.query = 'Mahlon'  
+    #     self.replace_text = 'Kilyona'    
+    #     print(Term.findTerm(self)[0][0])
+    #     print(self.verses[0][3])
+    #     self.assertEqual(Term.findTerm(self)[0][0],self.verses[0][3]) 
 
-    def test_replacefunction(self):
-        self.assertEqual(Term.findTerm(self)[0][0],self.verses[0][3]) # testing non-ASCII findTerm()
-        self.assertEqual(Term.findTerm(self)[0][0],self.verses[1][3]) # testing ASCII findTerm()
-        
+    def test_replaceTermfunction(self):
+        query = 'Mahlon'        
+        query_type = 'replace'
+        replace_text = 'Kilyona'        
+        self.assertEqual(Term.replaceTerm(self),self.verses[0][3])         
 
-
-print('hello world')
+    # def test_replaceTermfunction(self):        
+    #     query = 'Mahlon'        
+    #     query_type = 'replace'
+    #     replace_text = 'Kilyona'        
+    #     term1 = Term(query, query_type, replace_text)
+    #     self.assertEqual(term1.replaceTerm(),self.verses[1][3]) 
 
 if __name__ == '__main__':
     unittest.main()

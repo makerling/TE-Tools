@@ -3,7 +3,7 @@
 from timeit import default_timer as timer
 import argparse
 from gooey import Gooey, GooeyParser
-import Actions.sql_find_replace_class as sql_find_replace_class
+import Actions.sql_find_replace_class as find_replace
 
 
 @Gooey(program_name='TE Tools',
@@ -41,31 +41,8 @@ def main():
             'show_label': True,
             'show_help': True,
             'show_border': True
-        }
-                
-    )
-    # export = subs.add_parser('Export')
-    # export.add_mutually_exclusive_group(
-    #     #choices=['one','two'],
-    #     # gooey_options={
-    #     #     'initial_selection': 5
-    #     # }
-    #     required=True,
-    #     # gooey_options={
-    #     #     #title="Choose the file naming scheme", 
-    #     #     full_width=True
-    #     # }        
-    # )   
-    # export.add_argument(
-    #     "--original_filename", metavar="Keep original filename", action="store_true"
-    # )
-    # export.add_argument(
-    #      "--file_prefix",
-    #     metavar="Create a sequence",
-    #     help="Choose the file prefix",
-    #     widget="TextField",
-    #     default="video",
-    # )                                              
+        }                
+    )                                         
 
     #using add_argument_group lets you eliminates/customize the 'option/required' headings
     find_replace = subs.add_parser('Find/Bulk-Replace')
@@ -138,7 +115,7 @@ def main():
 def run(args):
     
     if args.command == "Find/Bulk-Replace":
-        sql_find_replace_class.main(args)
+        find_replace.main(args)
     
 #----------------------------------------------------------------
 if __name__ == "__main__":

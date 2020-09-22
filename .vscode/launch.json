@@ -13,7 +13,7 @@
                 "FWVersion": "8"
             },
             //file path is with 1 forward slash is supposed to work cross platform
-            "program": "${workspaceFolder}/TETools.py",
+            "program": "${workspaceFolder}/Actions/test_sql_find_replace.py",
             "console": "integratedTerminal"
         }
     ]
