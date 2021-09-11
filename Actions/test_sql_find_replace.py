@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import unittest
 import sqlite3, re
-from sql_find_replace_class import Term
+from Actions.sql_find_replace_class import Term
 
 class testsqlfindreplace(unittest.TestCase):
     
@@ -34,18 +34,18 @@ class testsqlfindreplace(unittest.TestCase):
     #     print(self.verses[0][3])
     #     self.assertEqual(Term.findTerm(self)[0][0],self.verses[0][3]) 
 
-    def test_replaceTermfunction(self):
-        query = 'Mahlon'        
-        query_type = 'replace'
-        replace_text = 'Kilyona'        
-        self.assertEqual(Term.replaceTerm(self),self.verses[0][3])         
-
-    # def test_replaceTermfunction(self):        
+    # def test_replaceTermfunction(self):
     #     query = 'Mahlon'        
     #     query_type = 'replace'
     #     replace_text = 'Kilyona'        
-    #     term1 = Term(query, query_type, replace_text)
-    #     self.assertEqual(term1.replaceTerm(),self.verses[1][3]) 
+    #     self.assertEqual(Term.replaceTerm(self),self.verses[0][3])         
+
+    def test_replaceTermfunction(self):        
+        query = 'Mahlon'        
+        query_type = 'replace'
+        replace_text = 'Kilyona'        
+        term1 = Term(query, query_type, replace_text)
+        self.assertEqual(term1.replaceTerm(),self.verses[1][3]) 
 
 if __name__ == '__main__':
     unittest.main()
