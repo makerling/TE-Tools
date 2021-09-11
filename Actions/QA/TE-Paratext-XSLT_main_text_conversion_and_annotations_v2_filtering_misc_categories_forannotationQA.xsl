@@ -12,8 +12,6 @@
 <xsl:template match="oxes">
     <xsl:for-each select="oxesText/canon/book">
         <xsl:variable name="book" select="@ID" />
-        \id <xsl:value-of select="$book"/>
-        \h <xsl:value-of select="titleGroup/@short"/>
         \\mt**\\mt <xsl:value-of select="titleGroup/title/annotation[1]/@status"/><xsl:for-each select="titleGroup/title/annotation">
 		<xsl:if test="notationCategories/category != 'NoNote' and notationCategories/category != 'Misc'">
         		<xsl:text>==</xsl:text><xsl:value-of select="notationQuote/para/span"/><xsl:text>**\f + \fr </xsl:text><xsl:value-of select="../../../@ID"/><xsl:text>.0.0 </xsl:text><xsl:value-of select="notationQuote/para/span"/><xsl:text> 0:0 </xsl:text><xsl:value-of select="notationDiscussion/para/span"/><xsl:text> \f*</xsl:text>
@@ -23,14 +21,6 @@
 	<xsl:value-of select="titleGroup/title/trGroup/tr"/><!--<xsl:text>**</xsl:text>-->
         <xsl:for-each select="section">
             <xsl:variable name="chaptnumb" select="p/chapterStart/@n" />
-            <xsl:if test="p/chapterStart">
-                \c <xsl:value-of select="$chaptnumb"/>
-            </xsl:if>
-            <xsl:if test="sectionHead">
-                <xsl:for-each select="sectionHead"><!--\s needs to be outside of under \p processing to catch areas that have multiple \s and Psa 119-->
-                    \s <xsl:value-of select="trGroup/tr"/>
-                </xsl:for-each>
-            </xsl:if>          
             <xsl:for-each select="p"><!--puts \p tags but avoids trGroups without verseStart i.e Psalms, or \p nodes where trGroup is the first element, those are done manually below (line 33)-->
                 <xsl:if test="verseStart and name(./*[1]) = 'verseStart' or name(./*[1]) = 'verseEnd' or name(./*[1]) = 'chapterStart'">
                     \<xsl:value-of select ="name(.)"/>
@@ -41,9 +31,8 @@
                         \p<xsl:text> </xsl:text><xsl:value-of select="tr"/>
                     </xsl:if>
                     <xsl:if test="name(.) = 'verseStart'"><!--finds verse number and the following first sibling of the first trGroup, the rest of the verse gets handles by line 33-->
-                        <xsl:variable name="versenumb" select="@ID" /><!--reserving versenum to only process annotation for current verse-->
-                        <!--some character needs to be present before argument or it doesn't list each verse on each line-->
-                        *<xsl:value-of select="$book"/><xsl:text>.</xsl:text><xsl:value-of select="$chaptnumb"/><xsl:text>.</xsl:text><xsl:value-of select="@n"/>
+                        <xsl:variable name="versenumb" select="@ID" /><!--reserving versenum to only process annotation for current verse-->                        
+                        *<xsl:value-of select="$book"/><xsl:text>.</xsl:text><xsl:value-of select="$chaptnumb"/><xsl:text>.</xsl:text><xsl:value-of select="@n"/><!--some character needs to be present before argument or it doesn't list each verse on each line-->
                         <xsl:for-each select="../*">
                             <!--versenumb is:<xsl:value-of select="$versenumb"/> oxesRef is:<xsl:value-of select="@oxesRef"/>-->
                             <xsl:if test="@oxesRef=$versenumb and notationCategories/category != 'NoNote' and notationCategories/category != 'Misc'"> <!---->
