@@ -21,8 +21,8 @@
 	<xsl:text>==####</xsl:text>
 	<xsl:value-of select="titleGroup/title/trGroup/tr"/><!--<xsl:text>**</xsl:text>-->
         <xsl:for-each select="section">
+            <xsl:variable name="chaptnumb" select="p/chapterStart/@n" />
             <xsl:if test="p/chapterStart">
-                <xsl:variable name="chaptnumb" select="p/chapterStart/@n" />
                 \c <xsl:value-of select="$chaptnumb"/>
             </xsl:if>
             <xsl:if test="sectionHead">
@@ -41,7 +41,7 @@
                     </xsl:if>
                     <xsl:if test="name(.) = 'verseStart'"><!--finds verse number and the following first sibling of the first trGroup, the rest of the verse gets handles by line 33-->
                         <xsl:variable name="versenumb" select="@ID" /><!--reserving versenum to only process annotation for current verse-->
-                        \\v**\\v <xsl:value-of select="@n"/>
+                        \\v**\\v <xsl:value-of select="$chaptnumb"/><xsl:text>.</xsl:text><xsl:value-of select="@n"/>
                         <xsl:for-each select="../*">
                             <!--versenumb is:<xsl:value-of select="$versenumb"/> oxesRef is:<xsl:value-of select="@oxesRef"/>-->
                             <xsl:if test="@oxesRef=$versenumb and notationCategories/category != 'NoNote' and notationCategories/category != 'Misc'"> <!---->
