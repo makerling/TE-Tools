@@ -11,7 +11,8 @@
     but I think this is a just a mistake too " -->
 <xsl:template match="oxes">
     <xsl:for-each select="oxesText/canon/book">
-        \id <xsl:value-of select="@ID"/>
+        <xsl:variable name="book" select="@ID" />
+        \id <xsl:value-of select="$book"/>
         \h <xsl:value-of select="titleGroup/@short"/>
         \\mt**\\mt <xsl:value-of select="titleGroup/title/annotation[1]/@status"/><xsl:for-each select="titleGroup/title/annotation">
 		<xsl:if test="notationCategories/category != 'NoNote' and notationCategories/category != 'Misc'">
@@ -41,7 +42,8 @@
                     </xsl:if>
                     <xsl:if test="name(.) = 'verseStart'"><!--finds verse number and the following first sibling of the first trGroup, the rest of the verse gets handles by line 33-->
                         <xsl:variable name="versenumb" select="@ID" /><!--reserving versenum to only process annotation for current verse-->
-                        \\v**\\v <xsl:value-of select="$chaptnumb"/><xsl:text>.</xsl:text><xsl:value-of select="@n"/>
+                        <!--some character needs to be present before argument or it doesn't list each verse on each line-->
+                        *<xsl:value-of select="$book"/><xsl:text>.</xsl:text><xsl:value-of select="$chaptnumb"/><xsl:text>.</xsl:text><xsl:value-of select="@n"/>
                         <xsl:for-each select="../*">
                             <!--versenumb is:<xsl:value-of select="$versenumb"/> oxesRef is:<xsl:value-of select="@oxesRef"/>-->
                             <xsl:if test="@oxesRef=$versenumb and notationCategories/category != 'NoNote' and notationCategories/category != 'Misc'"> <!---->
