@@ -12,9 +12,9 @@
 <xsl:template match="oxes">
     <xsl:for-each select="oxesText/canon/book">
         <xsl:variable name="book" select="@ID" />
-        \\mt**\\mt <xsl:value-of select="titleGroup/title/annotation[1]/@status"/><xsl:for-each select="titleGroup/title/annotation">
+        *<xsl:value-of select="$book"/><xsl:text>.0.</xsl:text><xsl:value-of select="titleGroup/title/annotation[1]/@status"/><xsl:for-each select="titleGroup/title/annotation">
 		<xsl:if test="notationCategories/category != 'NoNote' and notationCategories/category != 'Misc'">
-        		<xsl:text>==</xsl:text><xsl:value-of select="notationQuote/para/span"/><xsl:text>**\f + \fr </xsl:text><xsl:value-of select="../../../@ID"/><xsl:text>.0.0 </xsl:text><xsl:value-of select="notationQuote/para/span"/><xsl:text> 0:0 </xsl:text><xsl:value-of select="notationDiscussion/para/span"/><xsl:text> \f*</xsl:text>
+        		<xsl:text>==</xsl:text><xsl:value-of select="notationQuote/para/span"/>
 		</xsl:if>
         </xsl:for-each>
 	<xsl:text>==####</xsl:text>
