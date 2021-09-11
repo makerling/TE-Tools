@@ -14,10 +14,10 @@
         <xsl:variable name="book" select="@ID" />
         *<xsl:value-of select="$book"/><xsl:text>.0.</xsl:text><xsl:value-of select="titleGroup/title/annotation[1]/@status"/><xsl:for-each select="titleGroup/title/annotation">
 		<xsl:if test="notationCategories/category != 'NoNote' and notationCategories/category != 'Misc'">
-        		<xsl:text>==</xsl:text><xsl:value-of select="notationQuote/para/span"/>
+        		<xsl:text>*</xsl:text><xsl:value-of select="notationQuote/para/span"/>
 		</xsl:if>
         </xsl:for-each>
-	<xsl:text>==####</xsl:text>
+	<xsl:text>*####</xsl:text>
 	<xsl:value-of select="titleGroup/title/trGroup/tr"/><!--<xsl:text>**</xsl:text>-->
         <xsl:for-each select="section">
             <xsl:variable name="chaptnumb" select="p/chapterStart/@n" />
@@ -36,10 +36,10 @@
                         <xsl:for-each select="../*">
                             <!--versenumb is:<xsl:value-of select="$versenumb"/> oxesRef is:<xsl:value-of select="@oxesRef"/>-->
                             <xsl:if test="@oxesRef=$versenumb and notationCategories/category != 'NoNote' and notationCategories/category != 'Misc'"> <!---->
-                                <xsl:text>==</xsl:text><xsl:value-of select="notationQuote/para/span"/><!--for testing <xsl:value-of select="$versenumb"/>-->
+                                <xsl:text>*</xsl:text><xsl:value-of select="notationQuote/para/span"/><!--for testing <xsl:value-of select="$versenumb"/>-->
                             </xsl:if>
                         </xsl:for-each>
-			<xsl:text>==####</xsl:text>
+			<xsl:text>*####</xsl:text>
                         <xsl:value-of select="./following-sibling::trGroup[1]/tr"/>
                     </xsl:if>
                 </xsl:for-each>

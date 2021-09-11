@@ -90,6 +90,13 @@ XSLTJAVA="OXES_ANNOTATIONS_QA_CHECK\scripts\TE-Paratext-XSLT_main_text_conversio
 #saxonb-xslt -o:"$SFMOUTPUT" -s:"$OXESSRCFILE" -xsl:"$XSLT"
 export PATH=$PATH:"/cygdrive/C/Program\ Files/Java/jre1.8.0_301/bin/"
 java -jar saxon9he.jar -o:"$SFMOUTPUTJAVA" -s:"$OXESSRCFILEJAVA" -xsl:"$XSLTJAVA"
+#java -jar saxon9he.jar -o:result.sfm  -s:joined1886allbooks.oxes  -xsl:TE-Paratext-XSLT_main_text_conversion_and_annotations_v2_filtering_misc_categories_forannotationQA.xsl
+# grep '\\p' result.sfm |wc -l
+#24849 \p in orig
+#find regex:
+#(\n)(\s+)(\\p.*$)
+#replace with:
+#$3
 
 #more cleanup after transformation script
 #removes white space
