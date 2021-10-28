@@ -29,7 +29,7 @@ def title_annots(elements):
                 title_annots[title_annot[0].text] = title_annot_cat[0].text
 
         title_verse_num = title_verse_num if len(title_verse_num) > 0 else 0
-        print(f"*{element.attrib['ID']}.0.{title_verse_num}*{','.join(title_annots.keys())}")
+        print(f"*{element.attrib['ID']}.0.{title_verse_num}*{','.join(title_annots.keys())}####")
 
 elements = title_verse_num()
 title_annots(elements)
