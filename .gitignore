@@ -135,8 +135,7 @@ dmypy.json
 .ini
 
 #output artifact
-result.sfm
-result2.sfm
+*.sfm
 output.csv
 *.oxes
 *.xml
