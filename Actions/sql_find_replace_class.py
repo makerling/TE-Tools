@@ -28,7 +28,7 @@ class Term:
     def replaceTerm(self):     
         self.db.create_function('regexp', 3, lambda x, y, z: re.sub(y, z, x))
         self.db.create_function('match', 2, lambda x, y: 1 if re.findall(x, y) else 0)               
-        # without WHERE statement entire database is updated, affects trigger        
+        # without WHERE statement entire database is updated, affects trigger
         self.c.execute("""
             UPDATE verses 
             SET verse = 
@@ -71,7 +71,7 @@ def main(args):
     # determines if query should be using built-in replace() or custom regexp()
     query_type = 'replace' if args.Regex == False else 'regexp'
     # determines if only find should be run or find and replace
-    replace_text = query if args.replace == None else args.replace  
+    replace_text = query if args.replace == None else args.replace
 
     ######## running query/replace/stylize functions ###########
     term1 = Term(query, query_type, replace_text)
@@ -84,7 +84,7 @@ def main(args):
     else:
         term1.replaceTerm() # actual database find/replace 
         for i in result:
-            print(' found:      ', i[0], '\\\n', 'replaced:  ', i[1], '\\\n')         
+            print(' found:         ', i[0], '\\\n', 'replaced:  ', i[1], '\\\n')         
 
     print('match(es) found in', len(findTermResults), 'verse(s)')
     print('-' * 50) 

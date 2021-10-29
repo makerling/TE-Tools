@@ -133,3 +133,9 @@ dmypy.json
 # Database
 #.db
 .ini
+
+#output artifact
+*.sfm
+output.csv
+*.oxes
+*.xml
