@@ -40,6 +40,12 @@ def title_annots(elements):
         titles_final.append(title_final)
     
     return titles_final
+        
+def verses():
 
-elements = title_verse_num()
-print(title_annots(elements))
+    for chapter in root.xpath('//section'):
+        chap = chapter.xpath('p/chapterStart/@n')
+        for p in chapter.xpath('name(p)'):
+            print(f"{''.join(chap)} \{p}")
+
+verses()
