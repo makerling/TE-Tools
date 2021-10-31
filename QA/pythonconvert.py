@@ -1,4 +1,5 @@
 import lxml.etree as etree
+from collections import Counter
 
 with open('./joined1886allbooks.xml') as fobj:
     xml = fobj.read()
@@ -43,9 +44,11 @@ def title_annots(elements):
         
 def verses():
 
-    for chapter in root.xpath('//section'):
-        chap = chapter.xpath('p/chapterStart/@n')
-        for p in chapter.xpath('name(p)'):
-            print(f"{''.join(chap)} \{p}")
+    for element in root.xpath('//verseStart'):
+        ref = element.xpath('./@ID')
+        ref = ref[0].split('.')
+
+        next_sibling = element.xpath('./following-sibling::*[1]')
+        print(ref,next_sibling[0].tag)
 
 verses()
