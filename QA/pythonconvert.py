@@ -42,13 +42,26 @@ def title_annots(elements):
     
     return titles_final
         
-def verses():
+def nodes():
+    nodes = []
+    for element in root.xpath('//section'):
+        node = [x for x in element.xpath('p/* | p')]
+        nodes.extend(node)
+    
+    return nodes 
 
-    for element in root.xpath('//verseStart'):
-        ref = element.xpath('./@ID')
-        ref = ref[0].split('.')
+def verses(nodes):
+    for i,item in enumerate(nodes):
+        if item.tag == 'verseStart':
+            verse = item.attrib['ID'] + ' '
+        if item.tag == 'annotation':
+            verse += ''.join(item.xpath('notationQuote/para/span/text()')) + '*'
+        if item.tag == 'p' and i != 0:
+            verse += '\p '
+        if item.tag == 'trGroup':
+            verse += ''.join(item.xpath('tr/text()'))
+        if item.tag == 'verseEnd':
+            print(verse)
 
-        next_sibling = element.xpath('./following-sibling::*[1]')
-        print(ref,next_sibling[0].tag)
-
-verses()
+node_items = nodes()
+verses(node_items)
