@@ -1,5 +1,6 @@
 import lxml.etree as etree
 from collections import Counter
+import unicodedata
 
 with open('./joined1886allbooks.xml') as fobj:
     xml = fobj.read()
@@ -9,29 +10,35 @@ root = etree.fromstring(xml)
 def nodes():
     nodes = []
     for element in root.xpath('//section'):
-        node = [x for x in element.xpath('p/* | p | ../titleGroup/title/trGroup | ../titleGroup/title/annotation')]
+        node = [x for x in element.xpath('p/* | p')]
         nodes.extend(node)
     return nodes 
 
 def verses(nodes):
-    for i,item in enumerate(nodes):
-        # catches title annotations
-        if item.tag == 'annotation' and '.0.0' in item.attrib['oxesRef']:
-            verse = item.attrib['oxesRef'] + '*'
-            verse += ''.join(item.xpath('notationQuote/para/span/text()')) + '*'
+    for item in nodes:
+
+        # start of verse block, resets verse variable
         if item.tag == 'verseStart':
-            verse = item.attrib['ID'] + '*'
-        if item.tag == 'annotation':
-            verse += ''.join(item.xpath('notationQuote/para/span/text()')) + '*'
-        if item.tag == 'p' and i != 0:
-            verse += '\p '
+            verse = []
+            annots = []
+            ref = item.attrib['ID']
+
+        skip_tags = set(['Misc','NoNote'])
+        tag_path = 'notationCategories/category/text()'
+        if item.tag == 'annotation' and len(skip_tags.intersection(set(item.xpath(tag_path)))) == 0:
+            annot = item.xpath('notationQuote/para/span/text()')
+            annots.append(unicodedata.normalize('NFC', annot[0]))
+            tag = item.xpath('notationCategories/category/text()')
+
         if item.tag == 'trGroup':
-            verse += ''.join(item.xpath('tr/text()'))
-            # catches and prints title
-            if '.0.0' in verse:
-                print(verse)
+            verse.extend(item.xpath('tr/text()'))
+
+        # end of verse block
         if item.tag == 'verseEnd':
-            print(verse)
+            # runs QA - checks if annotation term exists in verse
+            verse = unicodedata.normalize('NFC', ' '.join(verse))
+            match = [x for x in annots if x.lower() not in verse.lower()]
+            if len(match) > 0: print(f"{ref},{match},{verse},{tag}")
 
 node_items = nodes()
 verses(node_items)
