@@ -25,7 +25,7 @@ def verses(nodes):
 
         skip_tags = set(['Misc','NoNote'])
         tag_path = 'notationCategories/category/text()'
-        if item.tag == 'annotation' and len(skip_tags.intersection(set(item.xpath(tag_path)))) == 0:
+        if item.tag == 'annotation' and not skip_tags.intersection(set(item.xpath(tag_path))):
             annot = item.xpath('notationQuote/para/span/text()')
             annots.append(unicodedata.normalize('NFC', annot[0]))
             tag = item.xpath('notationCategories/category/text()')
@@ -38,7 +38,7 @@ def verses(nodes):
             # runs QA - checks if annotation term exists in verse
             verse = unicodedata.normalize('NFC', ' '.join(verse))
             match = [x for x in annots if x.lower() not in verse.lower()]
-            if len(match) > 0: print(f"{ref},{match},{verse},{tag}")
+            if match: print(f"{ref},{match},{verse},{tag}")
 
 node_items = nodes()
 verses(node_items)
