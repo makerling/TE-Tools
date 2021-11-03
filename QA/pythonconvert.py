@@ -1,5 +1,4 @@
 import lxml.etree as etree
-from collections import Counter
 import unicodedata
 
 with open('./joined1886allbooks.xml') as fobj:
