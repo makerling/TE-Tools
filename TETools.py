@@ -15,7 +15,21 @@ import Actions.sql_find_replace_class as find_replace
        optional_cols=4,
        default_size=(1100,600),
        advanced = True,
-       richtext_controls=True)
+       richtext_controls=True,
+       menu=[{
+            'name': 'File',
+            'items': [{
+                'type': 'AboutDialog',
+                'menuTitle': 'About',
+                'name': 'Gooey Layout Demo',
+                'description': 'An example of Gooey\'s layout flexibility',
+                'version': '0.12',
+                'copyright': '2021',
+                'website': 'https://github.com/makerling/TE-Tools',
+                'developer': 'Stevan Vanderwerf',
+                'license': 'GPL'
+                }]
+       }])
 def main():
     settings_msg = 'Example program to show how to place multiple argument groups as tabs'
     parser = GooeyParser(description=settings_msg)
@@ -108,7 +122,26 @@ def main():
                 'show_border': True
             }
         )  
-                    
+
+    qa = subs.add_parser('QA for .oxes files')
+    qa_group = qa.add_argument_group("QA for .oxes")
+    qa_group.add_argument(
+        '-QA', #what is seen by user in GUI, can't have spaces or will cause error
+        # '-find', #this is what is called by args to store user input e.g. args.find_what
+        help='Find what:',
+        widget="FileChooser",
+        gooey_options={
+            # 'show_border': True,            
+            # 'help_bg_color': '#d4193c',
+            # 'help_color': '#f2eded',
+            # 'columns': 4,
+            'full_width': True,
+            'show_help': True,
+            'show_label': False
+        }
+    )   
+
+
     args=parser.parse_args()
     run(args) 
 
