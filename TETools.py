@@ -4,6 +4,7 @@ from timeit import default_timer as timer
 import argparse
 from gooey import Gooey, GooeyParser
 import Actions.sql_find_replace_class as find_replace
+import Actions.qa_annotations as qa
 
 
 @Gooey(program_name='TE Tools',
@@ -123,12 +124,14 @@ def main():
             }
         )  
 
-    qa = subs.add_parser('QA for .oxes files')
+    # left-nav toolbar name - can't contain spaces
+    qa = subs.add_parser('QA-for-.oxes-files')
+    # heading name
     qa_group = qa.add_argument_group("QA for .oxes")
     qa_group.add_argument(
         '-QA', #what is seen by user in GUI, can't have spaces or will cause error
         # '-find', #this is what is called by args to store user input e.g. args.find_what
-        help='Find what:',
+        help='Filename (.oxes):',
         widget="FileChooser",
         gooey_options={
             # 'show_border': True,            
@@ -149,7 +152,8 @@ def run(args):
     
     if args.command == "Find/Bulk-Replace":
         find_replace.main(args)
+    if args.command == "QA-for-.oxes-files":
+        qa.main(args)
     
-#----------------------------------------------------------------
 if __name__ == "__main__":
     main()
