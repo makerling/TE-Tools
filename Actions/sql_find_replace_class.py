@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
 import sqlite3, re
-from colored import stylize, attr, fg 
+from colored import stylize, attr
 from pathlib import Path
 
 class Term:
@@ -90,7 +89,4 @@ def main(args):
     print('-' * 50) 
 
     term1.db.commit()
-    term1.db.close()  
-
-if __name__ == "__main__":
-    main(args)
+    term1.db.close()
