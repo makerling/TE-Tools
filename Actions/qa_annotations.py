@@ -1,6 +1,6 @@
 import lxml.etree as etree
 import unicodedata
-from colored import stylize
+from colored import stylize, attr
 
       
 def nodes(root):
